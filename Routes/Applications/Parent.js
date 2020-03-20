@@ -1,11 +1,11 @@
 var express = require("express");
-var Registration = express();
+var Parent = express();
 var mysql = require("mysql");
-var config = require("../../DB");
-var con = mysql.createPool(config);
+var config = require("./../../DB");
 var Joi = require("joi");
-var auth = require("../../auth");
-Registration.get("/", auth.validateRole("Registration"), function(req, res) {
+var con = mysql.createPool(config);
+var auth = require("./../../auth");
+Parent.get("/", function(req, res) {
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -14,7 +14,7 @@ Registration.get("/", auth.validateRole("Registration"), function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call getregistrations()";
+      let sp = "call GetParent()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -30,7 +30,7 @@ Registration.get("/", auth.validateRole("Registration"), function(req, res) {
     }
   });
 });
-Registration.get("/:ID", auth.validateRole("Registration"), function(
+Parent.get("/:ID", auth.validateRole("Parent"), function(
   req,
   res
 ) {
@@ -43,8 +43,8 @@ Registration.get("/:ID", auth.validateRole("Registration"), function(
       });
     } // not connected!
     else {
-      let sp = "call GetOneRegistration(?)";
-      connection.query(sp, ID, function(error, results, fields) {
+      let sp = "call getParentperApplication(?)";
+      connection.query(sp, [ID], function(error, results, fields) {
         if (error) {
           res.json({
             success: false,
@@ -59,42 +59,16 @@ Registration.get("/:ID", auth.validateRole("Registration"), function(
     }
   });
 });
-Registration.post("/", auth.validateRole("Registration"), function(req, res) {
+Parent.post("/", auth.validateRole("Parent"), function(req, res) {
   const schema = Joi.object().keys({
-    IDNumber:Joi.string().min(5).required(),
-      Fullname: Joi.string().min(5).required(),
-      Gender: Joi.string().min(1).required(),
-      Phone: Joi.string().min(3).required(),
-      Email: Joi.string().min(3).required(),
-      DOB:Joi.date().required(), 
-      Country: Joi.string().min(3).required(),
-      Passport: Joi.string(),
-      Religion: Joi.string().min(3).required(),
-      Marital: Joi.string().min(3).required(),
-      Height: Joi.string().min(3).required(),
-      Weight: Joi.string(),
-      Languages: Joi.string(),
-      Skills: Joi.string()
+    IDNumber:Joi.string().required(),
+      Name:Joi.string().required(),
+      ParentID:Joi.string().required(),
+      Relationship: Joi.string().required()
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [
-      req.body.IDNumber,
-      req.body.Fullname,
-      req.body.Gender,
-      req.body.Phone,
-      req.body.DOB,
-      req.body.Email,
-      req.body.Country,
-      req.body.Passport,
-      req.body.Religion,
-      req.body.Marital,
-      req.body.Height,
-      req.body.Weight,
-      req.body.Languages,
-      req.body.Skills,
-      res.locals.user
-    ];
+    let data = [req.body.IDNumber,req.body.Name,req.body.ParentID,req.body.Relationship ,res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -103,7 +77,7 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        let sp = "call SaveParent(?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -128,45 +102,22 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
     });
   }
 });
-Registration.put("/:ID", auth.validateRole("Registration"), function(
-  req,
-  res
-) {
+Parent.put("/:ID", auth.validateRole("Parent"), function (req, res) {
   const schema = Joi.object().keys({
-    Fullname: Joi.string().min(5).required(),
-    Gender: Joi.string().min(1).required(),
-    Phone: Joi.string().min(3).required(),
-    DOB:Joi.date().required(), 
-    Email: Joi.string().min(3).required(),
-    Country: Joi.string().min(3).required(),
-    Passport: Joi.string(),
-    Religion: Joi.string().min(3).required(),
-    Marital: Joi.string().min(3).required(),
-    Height: Joi.string().min(3).required(),
-    Weight: Joi.string(),
-    Languages: Joi.string(),
-    Skills: Joi.string()
+    IDNumber:Joi.string().required(),
+    Name:Joi.string().required(),
+    ParentID:Joi.string().required(),
+    Relationship: Joi.string().required()
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
     let data = [
-      req.body.Fullname,
-      req.body.Gender,
-      req.body.Phone,
-      req.body.Email,
-      req.body.DOB,
-      req.body.Country,
-      req.body.Passport,
-      req.body.Religion,
-      req.body.Marital,
-      req.body.Height,
-      req.body.Weight,
-      req.body.Languages,
-      req.body.Skills,
-      ID, 
-      res.locals.user];
-    con.getConnection(function(err, connection) {
+        req.body.IDNumber,req.body.Name,req.body.ParentID,req.body.Relationship ,
+      ID,
+      res.locals.user
+    ];
+    con.getConnection(function (err, connection) {
       if (err) {
         res.json({
           success: false,
@@ -174,8 +125,8 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
         });
       } // not connected!
       else {
-        let sp = "call UpdateRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        connection.query(sp, data, function(error, results, fields) {
+        let sp = "call UpdateParent(?,?,?,?,?,?)";
+        connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({
               success: false,
@@ -184,7 +135,7 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
           } else {
             res.json({
               success: true,
-              message: "Updated"
+              message: "updated successfully"
             });
           }
           connection.release();
@@ -199,13 +150,13 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
     });
   }
 });
-Registration.delete("/:ID", auth.validateRole("Registration"), function(
+Parent.delete("/:ID", auth.validateRole("Parent"), function(
   req,
   res
 ) {
   const ID = req.params.ID;
-  let data = [ID, res.locals.user];
 
+  let data = [ID,res.locals.user];
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -214,7 +165,7 @@ Registration.delete("/:ID", auth.validateRole("Registration"), function(
       });
     } // not connected!
     else {
-      let sp = "call DeleteRegistration(?,?)";
+      let sp = "call DeleteParent(?,?)";
       connection.query(sp, data, function(error, results, fields) {
         if (error) {
           res.json({
@@ -233,4 +184,4 @@ Registration.delete("/:ID", auth.validateRole("Registration"), function(
     }
   });
 });
-module.exports = Registration;
+module.exports = Parent;

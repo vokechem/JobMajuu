@@ -14,7 +14,7 @@ Minor.get("/", function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call Getminormedical()";
+      let sp = "call getMinorMedical()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -40,7 +40,7 @@ Minor.get("/:ID", auth.validateRole("Minor medical"), function (req, res) {
       });
     } // not connected!
     else {
-      let sp = "call GetMedicalFacility(?)";
+      let sp = "call GetOneMinorMedical(?)";
       connection.query(sp, [ID], function (error, results, fields) {
         if (error) {
           res.json({
@@ -58,16 +58,16 @@ Minor.get("/:ID", auth.validateRole("Minor medical"), function (req, res) {
 });
 Minor.post("/", auth.validateRole("Minor medical"), function(req, res) {
   const schema = Joi.object().keys({
-      applicant:Joi.number().integer().min().require(),
+    Number:Joi.string().required(),
       DOM:Joi.date().required(), 
-      medical:  Joi.number().integer().min(1),
+      MedicalFacility: Joi.string().required(),
       Result:Joi.string(),
-      Cost:Joi.number().integer().min(2)
+      Cost:Joi.Joi.string().required(),
 
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [req.body.applicant,req.body.DOM,req.body.medical,req.body.Result,req.body.Cost, res.locals.user];
+    let data = [req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost, res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -101,19 +101,19 @@ Minor.post("/", auth.validateRole("Minor medical"), function(req, res) {
     });
   }
 });
-Minor.put("/:ID", auth.validateRole("Facility"), function (req, res) {
+Minor.put("/:ID", auth.validateRole("Minor medical"), function (req, res) {
   const schema = Joi.object().keys({
-    applicant:Joi.number().integer().min().require(),
+    Number:Joi.string().required(),
     DOM:Joi.date().required(), 
-    MFID:  Joi.number().integer().min(1),
+    MedicalFacility: Joi.string().required(),
     Result:Joi.string(),
-    Cost:Joi.number().integer().min(2)
+    Cost:Joi.Joi.string().required(),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
     let data = [
-        req.body.applicant,req.body.DOM,req.body.medical,req.body.Result,req.body.Cost, res.locals.user,ID
+      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost, res.locals.user,ID
     ];
     con.getConnection(function (err, connection) {
       if (err) {
@@ -123,7 +123,7 @@ Minor.put("/:ID", auth.validateRole("Facility"), function (req, res) {
         });
       } // not connected!
       else {
-        let sp = "call UpdateMedicalFacility(?,?,?,?,?,?,?)";
+        let sp = "call UpdateMinorMedical(?,?,?,?,?,?,?)";
         connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({
@@ -148,7 +148,7 @@ Minor.put("/:ID", auth.validateRole("Facility"), function (req, res) {
     });
   }
 });
-Minor.delete("/:ID", auth.validateRole("Facility"), function(
+Minor.delete("/:ID", auth.validateRole("Minor medical"), function(
   req,
   res
 ) {
@@ -163,7 +163,7 @@ Minor.delete("/:ID", auth.validateRole("Facility"), function(
       });
     } // not connected!
     else {
-      let sp = "call DeleteMedicalfacility(?,?)";
+      let sp = "call DeleteMinorMedical(?,?)";
       connection.query(sp, data, function(error, results, fields) {
         if (error) {
           res.json({

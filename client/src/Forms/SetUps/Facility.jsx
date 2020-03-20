@@ -31,7 +31,7 @@ class Facility extends Component {
       Facility: [],
       Name: "",
       Description: "",
-      ID: "",
+      MedID: "",
       open: false,
       loading: true,
       privilages: [],
@@ -184,7 +184,7 @@ class Facility extends Component {
     };
 
     if (this.state.isUpdate) {
-      this.UpdateData("/api/Facility/" + this.state.ID, data);
+      this.UpdateData("/api/Facility/" + this.state.MedID, data);
     } else {
       this.postData("/api/Facility", data);
     }
@@ -193,7 +193,7 @@ class Facility extends Component {
     const data = {
       Name: Facility.Name,
       Description: Facility.Description,
-      ID: Facility.ID
+      MedID: Facility.MedID
     };
 
     this.setState(data);
@@ -352,7 +352,7 @@ class Facility extends Component {
                 <a
                   className="fa fa-trash"
                   style={{ color: "#f44542" }}
-                  onClick={e => this.handleDelete(k.ID, e)}
+                  onClick={e => this.handleDelete(k.MedID, e)}
                 >
                   Delete
                 </a>

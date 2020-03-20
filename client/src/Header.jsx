@@ -119,7 +119,7 @@ class Header extends Component {
       " border - bottom - left - radius": "4px"
     };
     let NavStyle = {
-      background: "#32a864"
+      background: "#FFC300"
     };
     return (
       <div id="page-wrapper" className="gray-bg">

@@ -14,7 +14,7 @@ Facility.get("/", function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call GetMedicalFacilities()";
+      let sp = "call GetMedicalFacility()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -40,7 +40,7 @@ Facility.get("/:ID", auth.validateRole("Facility"), function (req, res) {
       });
     } // not connected!
     else {
-      let sp = "call GetMedicalFacility(?)";
+      let sp = "call GetOneMedicalFacility(?)";
       connection.query(sp, [ID], function (error, results, fields) {
         if (error) {
           res.json({
@@ -133,7 +133,7 @@ Facility.put("/:ID", auth.validateRole("Facility"), function (req, res) {
           } else {
             res.json({
               success: true,
-              message: "updated"
+              message: "updated successfully"
             });
           }
           connection.release();
@@ -163,7 +163,7 @@ Facility.delete("/:ID", auth.validateRole("Facility"), function(
       });
     } // not connected!
     else {
-      let sp = "call DeleteMedicalfacility(?,?)";
+      let sp = "call DeletemedicalFacility(?,?)";
       connection.query(sp, data, function(error, results, fields) {
         if (error) {
           res.json({

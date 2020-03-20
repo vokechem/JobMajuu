@@ -7,7 +7,7 @@ let config = {
   host: "127.0.0.1",
   user: "root",
   password: "",
-  database: "arcm"
+  database: "majuu"
 };
 //  host: "192.168.1.242",
 module.exports = config;
