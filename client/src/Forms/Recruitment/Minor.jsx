@@ -23,6 +23,7 @@ class Minor extends Component {
       MedicalFacilty:"",
       IDNumber: "",
       FullName:"",
+      Number:"",
       Phone:"",
       DOM:"",
       Cost:"500",
@@ -116,6 +117,7 @@ class Minor extends Component {
       MedicalFacilty:"",
       IDNumber: "",
       FullName:"",
+      Number:"",
       Phone:"",
       DOM:"",
       Cost:"500",
@@ -286,27 +288,25 @@ class Minor extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const data = {
-      IDNumber: this.state.IDNumber,
+      Number: this.state.Number,
       MedicalFacility: this.state.MedicalFacility,
       Result: this.state.Result,
+      DOM:this.state.DOM,
       Cost: this.state.Cost,
-      Username: localStorage.getItem("UserName")
+     
     };
 
     if (this.state.isUpdate) {
-      this.UpdateData("/apiMinor/" + this.state.ID, data);
+      this.UpdateData("/api/Minor/" + this.state.ID, data);
     } else {
-      this.postData("/apiMinor", data);
+      this.postData("/api/Minor", data);
     }
   };
   handleEdit = Minor => {
  
     const data = {
       Number: Minor.Number,
-      Dom: dateFormat(
-        new Date(Minor.RegistrationDate).toLocaleDateString(),
-        "isoDate"
-      ),
+      DOM:Minor.DOM,
       Result: Minor.Result,
       Cost: Minor.Cost,
       MedicalFacility: Minor.MedicalFacility,
@@ -336,10 +336,10 @@ class Minor extends Component {
     doc.autoTable(columns, rows, {
       margin: { top: 60 },
       beforePageContent: function(data) {
-        doc.text("ARCM PROCUREMENT ENTITIES", 40, 50);
+        doc.text("RMS Minor Medical", 40, 50);
       }
     });
-    doc.save("ARCM Procurement Entities.pdf");
+    doc.save("RMS Minor medical.pdf");
   };
   ProtectRoute() {
     fetch("/api/UserAccess", {
@@ -500,7 +500,7 @@ class Minor extends Component {
     const Registration = [...this.state.Registration].map((k, i) => {
       return {
         value: k.IDNumber,
-        label: k.Fullname
+        label: k.IDNumber
       };
     });
     const Facility = [...this.state.Facility].map((k, i) => {
@@ -509,6 +509,16 @@ class Minor extends Component {
         label: k.Name
       };
     });
+    let GenderCategories = [
+      {
+        value: "Fail",
+        label: "Fail"
+      },
+      {
+        value: "Pass",
+        label: "Pass"
+      }
+    ];
     const ColumnData = [
       {
         label: "Fullname",
@@ -642,16 +652,10 @@ class Minor extends Component {
                       }
                     >
                       <ExcelSheet data={rows} name="Minor Medical">
-                        <ExcelColumn label="ID" value="PEID" />
-                        <ExcelColumn label="Name" value="Name" />
-                        <ExcelColumn label="Location" value="Location" />
-                        <ExcelColumn label="Website" value="Website" />
-                        <ExcelColumn label="Email" value="Email" />
-                        <ExcelColumn label="Telephone" value="Telephone" />
-                        <ExcelColumn label="CountyCode" value="CountyCode" />
-                        <ExcelColumn label="County" value="County" />
-                        <ExcelColumn label="PostalCode" value="PostalCode" />
-                        <ExcelColumn label="POBox" value="POBox" />
+                        <ExcelColumn label="Fullname" value="Fullname" />
+                        <ExcelColumn label="IDNumber" value="IDNumber" />
+                        <ExcelColumn label="MedicalFacility" value="MedicalFacility" />
+                        <ExcelColumn label="Cost" value="Cost" />
                       </ExcelSheet>
                     </ExcelFile>
                   ) : null}
@@ -719,9 +723,9 @@ class Minor extends Component {
                     </div>
                     <div class="col-sm-5">
                       <Select
-                        name="Facility"
+                        name="MedicalFacility"
                         value={Facility.filter(
-                          option => option.label === this.state.Facility
+                          option => option.label === this.state.MedicalFacility
                         )}
                         onChange={this.handleSelectChange}
                         options={Facility}
@@ -738,12 +742,28 @@ class Minor extends Component {
                       </label>
                     </div>
                     <div class="col-sm-5">
-                      <input
-                        type="text"
-                        class="form-control"
+                      <Select
                         name="Result"
+                        value={GenderCategories.filter(
+                          option => option.label === this.state.Result
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={GenderCategories}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Date OF medical
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="DOM"
                         onChange={this.handleInputChange}
-                        value={this.state.Result}
+                        value={this.state.DOM}
                         required
                       />
                     </div>

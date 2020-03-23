@@ -30,9 +30,12 @@ Minor.get("/", function(req, res) {
     }
   });
 });
-Minor.get("/:ID", auth.validateRole("Minor medical"), function (req, res) {
+Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
+  req,
+  res
+) {
   const ID = req.params.ID;
-  con.getConnection(function (err, connection) {
+  con.getConnection(function(err, connection) {
     if (err) {
       res.json({
         success: false,
@@ -41,7 +44,7 @@ Minor.get("/:ID", auth.validateRole("Minor medical"), function (req, res) {
     } // not connected!
     else {
       let sp = "call GetOneMinorMedical(?)";
-      connection.query(sp, [ID], function (error, results, fields) {
+      connection.query(sp, [ID], function(error, results, fields) {
         if (error) {
           res.json({
             success: false,
@@ -56,14 +59,16 @@ Minor.get("/:ID", auth.validateRole("Minor medical"), function (req, res) {
     }
   });
 });
-Minor.post("/", auth.validateRole("Minor medical"), function(req, res) {
+Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
   const schema = Joi.object().keys({
-    Number:Joi.string().required(),
-      DOM:Joi.date().required(), 
+    Number:Joi.number()
+    .integer()
+    .min(1),
+      DOM:Joi.date().required(),
       MedicalFacility: Joi.string().required(),
-      Result:Joi.string(),
-      Cost:Joi.Joi.string().required(),
-
+      Result: Joi.string().required(),
+      Cost: Joi.string().required()
+  
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -86,7 +91,7 @@ Minor.post("/", auth.validateRole("Minor medical"), function(req, res) {
           } else {
             res.json({
               success: true,
-              message: "Minor Medical Successfully Saved"
+              message: "saved"
             });
           }
           connection.release();
@@ -101,19 +106,23 @@ Minor.post("/", auth.validateRole("Minor medical"), function(req, res) {
     });
   }
 });
-Minor.put("/:ID", auth.validateRole("Minor medical"), function (req, res) {
+Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
   const schema = Joi.object().keys({
-    Number:Joi.string().required(),
-    DOM:Joi.date().required(), 
-    MedicalFacility: Joi.string().required(),
-    Result:Joi.string(),
-    Cost:Joi.Joi.string().required(),
+    Number:Joi.number()
+    .integer()
+    .min(1),
+      DOM:Joi.date().required(),
+      MedicalFacility: Joi.string().required(),
+      Result: Joi.string().required(),
+      Cost: Joi.string().required()
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
     let data = [
-      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost, res.locals.user,ID
+      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost,
+      ID,
+      res.locals.user
     ];
     con.getConnection(function (err, connection) {
       if (err) {
@@ -133,7 +142,7 @@ Minor.put("/:ID", auth.validateRole("Minor medical"), function (req, res) {
           } else {
             res.json({
               success: true,
-              message: "updated"
+              message: "updated successfully"
             });
           }
           connection.release();
@@ -148,7 +157,7 @@ Minor.put("/:ID", auth.validateRole("Minor medical"), function (req, res) {
     });
   }
 });
-Minor.delete("/:ID", auth.validateRole("Minor medical"), function(
+Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
   req,
   res
 ) {

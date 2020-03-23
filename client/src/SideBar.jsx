@@ -377,11 +377,43 @@ const Recruitment = props => {
                 </Link>
               </li>
             ) : null}
-                   {props.validaterole("Minor Medical", "View") ? (
+                   {props.validaterole("DCI Clearance", "View") ? (
               <li>
-                <Link to="/Minor">
+                <Link to="/DCI">
                   <i className="fa fa-tasks" />
-                  Minor Medical
+                  DCI Clearance
+                </Link>
+              </li>
+            ) : null}
+            {props.validaterole("Passport processing", "View") ? (
+              <li>
+                <Link to="/Passport">
+                  <i className="fa fa-tasks" />
+                  Passport processing 
+                </Link>
+              </li>
+            ) : null}
+            {props.validaterole("Training", "View") ? (
+              <li>
+                <Link to="/Training">
+                  <i className="fa fa-tasks" />
+                  Training
+                </Link>
+              </li>
+            ) : null}
+                             {props.validaterole("Major Medical", "View") ? (
+              <li>
+                <Link to="/Major">
+                  <i className="fa fa-tasks" />
+                Major medical
+                </Link>
+              </li>
+            ) : null}
+                             {props.validaterole("Contract Processing", "View") ? (
+              <li>
+                <Link to="/Contract">
+                  <i className="fa fa-tasks" />
+                  Contract Processing
                 </Link>
               </li>
             ) : null}
