@@ -15,6 +15,7 @@ var Parent=require("./Routes/Applications/Parent");
 var NextOFKin=require("./Routes/Applications/NextOfKin");
 var Siblings=require("./Routes/Applications/Siblings")
 var Minor= require("./Routes/Applications/Minor");
+var DCI=require("./Routes/Applications/DCI");
 var Roles = require("./Routes/SystemAdmin/Roles");
 var SMSdetails=require("./Routes/SetUps/SMSdetails");
 var Auditrails = require("./Routes/SystemAdmin/Auditrails");
@@ -68,6 +69,7 @@ app.use("/api/Facility",Facility);
 app.use("/api/usergroups", usergroups);
 app.use("/api/roles", Roles);
 app.use("/api/Minor",Minor);
+app.use("/api/DCI",DCI);
 app.use("/api/Educational",Educational);
 app.use("/api/Parent",Parent);
 app.use("/api/NextOFKin",NextOFKin);

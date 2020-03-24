@@ -49,6 +49,7 @@ class Registration extends Component {
       Skills:"",
       Decription:"",
       Period:"",
+      UserGroup:"",
       Institution:"",
       AddEducational:false,
       AddGuardians:false,
@@ -165,6 +166,14 @@ class Registration extends Component {
     this.SaveTenderdetails = this.SaveTenderdetails.bind(this);
     this.CompletedApplication = this.CompletedApplication.bind(this);
   }
+  handleSelectChange = (UserGroup, actionMeta) => {
+    if (actionMeta.name === "UserGroup") {
+      this.setState({ UserGroupID: UserGroup.value });
+      this.setState({ [actionMeta.name]: UserGroup.label });
+    } else {
+      this.setState({ [actionMeta.name]: UserGroup.value });
+    }
+  };
   checkDocumentRoles = CreatedBy => {
     if (this.state.Board) {
       return true;
@@ -2274,32 +2283,14 @@ handleSiblingsSubmit = event => {
         label: k.Description
       };
     });
-    let TenderSubCategories = [
+    let GenderCategories = [
       {
-        value: "Simple",
-        label: "Simple"
+        value: "Male",
+        label: "Male"
       },
       {
-        value: "Medium",
-        label: "Medium"
-      },
-      {
-        value: "Complex",
-        label: "Complex"
-      }
-    ];
-    let TenderCategories = [
-      {
-        value: "Pre-qualification",
-        label: "Pre-qualification"
-      },
-      {
-        value: "Unquantified Tenders",
-        label: "Unquantified Tenders"
-      },
-      {
-        value: "Other Tenders",
-        label: "Other Tenders"
+        value: "Female",
+        label: "Female"
       }
     ];
     const ColumnData = [
@@ -2844,14 +2835,15 @@ handleSiblingsSubmit = event => {
                             </label>
                           </div>
                           <div class="col-sm-4">
-                            <input
-                              type="text"
-                              class="form-control"
-                              name="Gender"
-                              onChange={this.handleInputChange}
-                              value={this.state.Gender}
-                              required
-                            />
+                          <Select
+                                  name="Gender"
+                                  value={GenderCategories.filter(
+                                    option => option.label === this.state.Gender
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={GenderCategories}
+                                  required
+                                />
                           </div>
                           <div class="col-sm-2">
                             <label for="Phone" className="font-weight-bold">

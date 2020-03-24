@@ -33,6 +33,7 @@ import smtpdetails from "./Forms/SetUps/smtpdetails";
 import Facility from "./Forms/SetUps/Facility";
 import Registration from "./Forms/Recruitment/Registration";
 import Minor from "./Forms/Recruitment/Minor";
+import DCI from "./Forms/Recruitment/DCI";
 
 function App() {
   let token = localStorage.getItem("token");
@@ -61,6 +62,7 @@ function App() {
                 <Route exact path="/Facility" component={Facility}/>
                 <Route exact path="/Registration"component={Registration}/>
                 <Route exact path="/Minor"component={Minor}/>
+                <Route exact path="/DCI" component={DCI}/>
                  <Route component={Notfound} />
               </Switch>
               <Footer />

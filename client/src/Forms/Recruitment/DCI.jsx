@@ -11,23 +11,23 @@ import ReactExport from "react-data-export";
 var dateFormat = require("dateformat");
 var jsPDF = require("jspdf");
 require("jspdf-autotable");
-class Minor extends Component {
+class DCI extends Component {
   constructor() {
     super();
     this.state = {
-      Minor: [],
+      DCI: [],
       Facility: [],
       Registration:[],
       privilages: [],
       profile: true,
-      MedicalFacilty:"",
       IDNumber: "",
       FullName:"",
       Number:"",
       Phone:"",
-      DOM:"",
-      Cost:"500",
-      Resuit:"",
+      DOT:"",
+      DOC:"",
+      Certificate_status:"",
+      Cost:"1084",
       ID: "",
       MedID:"",
       isUpdate: false,
@@ -114,15 +114,16 @@ class Minor extends Component {
   };
   Resetsate() {
     const data = {
-      MedicalFacilty:"",
-      IDNumber: "",
-      FullName:"",
-      Number:"",
-      Phone:"",
-      DOM:"",
-      Cost:"500",
-      Resuit:"",
-      ID: "",
+        IDNumber: "",
+        FullName:"",
+        Number:"",
+        Phone:"",
+        DOT:"",
+        DOC:"",
+        Certificate_status:"",
+        Cost:"1084",
+        ID: "",
+        MedID:"",
       isUpdate: false,
       PIN: "",
       Companyregistrationdate: "",
@@ -230,8 +231,8 @@ class Minor extends Component {
       // });
     }
   };
-  fetchMinor = () => {
-    fetch("/api/Minor", {
+  fetchDCI = () => {
+    fetch("/api/DCI", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -239,11 +240,11 @@ class Minor extends Component {
       }
     })
       .then(res => res.json())
-      .then(Minor => {
-        if (Minor.length > 0) {
-          this.setState({ Minor: Minor });
+      .then(DCI => {
+        if (DCI.length > 0) {
+          this.setState({ DCI: DCI });
         } else {
-          swal("", Minor.message, "error");
+          swal("", DCI.message, "error");
         }
       })
       .catch(err => {
@@ -268,7 +269,7 @@ class Minor extends Component {
         .then(response =>
           response.json().then(data => {
             if (data.success) {
-              this.fetchMinor();
+              this.fetchDCI();
               this.fetchRegistration();
               this.fetchFacility();
               this.ProtectRoute();
@@ -289,27 +290,27 @@ class Minor extends Component {
     event.preventDefault();
     const data = {
       Number: this.state.Number,
-      MedicalFacility: this.state.MedicalFacility,
-      Result: this.state.Result,
-      DOM:this.state.DOM,
+      DOT: this.state.DOT,
+      Certificate_status: this.state.Certificate_status,
+      DOC:this.state.DOC,
       Cost: this.state.Cost,
      
     };
 
     if (this.state.isUpdate) {
-      this.UpdateData("/api/Minor/" + this.state.ID, data);
+      this.UpdateData("/api/DCI/" + this.state.ID, data);
     } else {
-      this.postData("/api/Minor", data);
+      this.postData("/api/DCI", data);
     }
   };
-  handleEdit = Minor => {
+  handleEdit = DCI => {
  
     const data = {
-      Number: Minor.Number,
-      DOM:Minor.DOM,
-      Result: Minor.Result,
-      Cost: Minor.Cost,
-      MedicalFacility: Minor.MedicalFacility,
+      Number: DCI.Number,
+      DOT:DCI.DOT,
+      Certificate_status: DCI.Certificate_status,
+      Cost: DCI.Cost,
+      DOC: DCI.DOC,
     };
 
     this.setState(data);
@@ -325,21 +326,23 @@ class Minor extends Component {
       { title: "Fullname", dataKey: "Fullname" },
       { title: "IDNumber", dataKey: "IDNumber" },
       { title: "Cost", dataKey: "Cost" },
-      { title: "MedicalFacility", dataKey: "MedicalFacility" },
+      { title: "DOT", dataKey: "DOT" },
+      { title: "DOC", dataKey: "DOC" },
+      { title: "Certificate_status", dataKey: "Certificate_status" },
     
     ];
 
-    const rows = [...this.state.Minor];
+    const rows = [...this.state.DCI];
 
     var doc = new jsPDF("p", "pt", "a2", "portrait");
 
     doc.autoTable(columns, rows, {
       margin: { top: 60 },
       beforePageContent: function(data) {
-        doc.text("RMS Minor Medical", 40, 50);
+        doc.text("RMS DCI Clearance", 40, 50);
       }
     });
-    doc.save("RMS Minor medical.pdf");
+    doc.save("RMS DCI Clearance.pdf");
   };
   ProtectRoute() {
     fetch("/api/UserAccess", {
@@ -408,7 +411,7 @@ class Minor extends Component {
       buttons: true,
     }).then(willDelete => {
       if (willDelete) {
-        return fetch("/api/Minor/" + k, {
+        return fetch("/api/DCI/" + k, {
           method: "Delete",
           headers: {
             "Content-Type": "application/json",
@@ -423,7 +426,7 @@ class Minor extends Component {
               } else {
                 swal("", data.message, "error");
               }
-              this.fetchMinor();
+              this.fetchDCI();
             })
           )
           .catch(err => {
@@ -443,7 +446,7 @@ class Minor extends Component {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchMinor();
+          this.fetchDCI();
 
           if (data.success) {
             swal("", "Record has been Updated!", "success");
@@ -473,7 +476,7 @@ class Minor extends Component {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchMinor();
+          this.fetchDCI();
 
           if (data.success) {
             swal("", "Record has been saved!", "success");
@@ -509,14 +512,22 @@ class Minor extends Component {
         label: k.Name
       };
     });
-    let GenderCategories = [
+    let CertificateProcessing = [
       {
-        value: "Fail",
-        label: "Fail"
+        value: "Queued",
+        label: "Queued"
       },
       {
-        value: "Pass",
-        label: "Pass"
+        value: "Processing",
+        label: "Processing"
+      },
+      {
+        value: "Issued",
+        label: "Issued"
+      },
+      {
+        value: "Others",
+        label: "Others"
       }
     ];
     const ColumnData = [
@@ -536,8 +547,8 @@ class Minor extends Component {
         sort: "asc"
       },
       {
-        label: "MedicalFacility",
-        field: "MedicalFacility",
+        label: "Certificate_status",
+        field: "Certificate_status",
         sort: "asc"
       },
       {
@@ -553,14 +564,14 @@ class Minor extends Component {
       }
     ];
     let Rowdata1 = [];
-    const rows = [...this.state.Minor];
+    const rows = [...this.state.DCI];
     if (rows.length > 0) {
       rows.map((k, i) => {
         let Rowdata = {
           IDNumber: k.IDNumber,
           Fullname: k.Fullname,
           Phone: k.Phone,
-          MedicalFacility: k.MedicalFacility,
+          Certificate_status: k.Certificate_status,
           Cost: k.Cost,
           action: (
             <span>
@@ -611,13 +622,13 @@ class Minor extends Component {
               <div className="col-lg-9">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <h2>Minor Medical</h2>
+                    <h2>DCI Clearance</h2>
                   </li>
                 </ol>
               </div>
               <div className="col-lg-3">
                 <div className="row wrapper ">
-                  {this.validaterole("Minor Medical", "AddNew") ? (
+                  {this.validaterole("DCI Clearance", "AddNew") ? (
                     <button
                       type="button"
                       style={{ marginTop: 40 }}
@@ -628,7 +639,7 @@ class Minor extends Component {
                     </button>
                   ) : null}
                   &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
+                  {this.validaterole("DCI Clearance", "Export") ? (
                     <button
                       onClick={this.exportpdf}
                       type="button"
@@ -639,7 +650,7 @@ class Minor extends Component {
                     </button>
                   ) : null}
                   &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
+                  {this.validaterole("DCI Clearance", "Export") ? (
                     <ExcelFile
                       element={
                         <button
@@ -651,10 +662,10 @@ class Minor extends Component {
                         </button>
                       }
                     >
-                      <ExcelSheet data={rows} name="Minor Medical">
+                      <ExcelSheet data={rows} name="DCI Clearance">
                         <ExcelColumn label="Fullname" value="Fullname" />
                         <ExcelColumn label="IDNumber" value="IDNumber" />
-                        <ExcelColumn label="MedicalFacility" value="MedicalFacility" />
+                        <ExcelColumn label="DOT" value="DOT" />
                         <ExcelColumn label="Cost" value="Cost" />
                       </ExcelSheet>
                     </ExcelFile>
@@ -676,7 +687,7 @@ class Minor extends Component {
             <div className="col-lg-10">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <h2>Minor medical</h2>
+                  <h2>DCI Clearance</h2>
                 </li>
               </ol>
             </div>
@@ -702,7 +713,7 @@ class Minor extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="Number" className="font-weight-bold">
-                       Name
+                       ID Number
                       </label>
                     </div>
                     <div class="col-sm-5">
@@ -717,18 +728,17 @@ class Minor extends Component {
                       />
                     </div>
                     <div class="col-sm-1">
-                      <label for="Number" className="font-weight-bold">
-                        Medical Facility
+                      <label for="PEType" className="font-weight-bold">
+                        Date OF FingerPrint taking
                       </label>
                     </div>
                     <div class="col-sm-5">
-                      <Select
-                        name="MedicalFacility"
-                        value={Facility.filter(
-                          option => option.label === this.state.MedicalFacility
-                        )}
-                        onChange={this.handleSelectChange}
-                        options={Facility}
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="DOT"
+                        onChange={this.handleInputChange}
+                        value={this.state.DOT}
                         required
                       />
                     </div>
@@ -738,32 +748,32 @@ class Minor extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
-                        Result
+                      Certificate status
                       </label>
                     </div>
                     <div class="col-sm-5">
                       <Select
-                        name="Result"
-                        value={GenderCategories.filter(
-                          option => option.label === this.state.Result
+                        name="Certificate_status"
+                        value={CertificateProcessing.filter(
+                          option => option.label === this.state.Certificate_status
                         )}
                         onChange={this.handleSelectChange}
-                        options={GenderCategories}
+                        options={CertificateProcessing}
                         required
                       />
                     </div>
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
-                        Date OF medical
+                        Date OF Certificate issue
                       </label>
                     </div>
                     <div class="col-sm-5">
                       <input
                         type="date"
                         class="form-control"
-                        name="DOM"
+                        name="DOC"
                         onChange={this.handleInputChange}
-                        value={this.state.DOM}
+                        value={this.state.DOC}
                         required
                       />
                     </div>
@@ -790,4 +800,4 @@ class Minor extends Component {
   }
 }
 
-export default Minor;
+export default DCI;
