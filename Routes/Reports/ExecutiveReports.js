@@ -5,8 +5,8 @@ var config = require("./../../DB");
 var Joi = require("joi");
 var con = mysql.createPool(config);
 var auth = require("./../../auth");
-ExecutiveReports.get("/:ID", function(req, res) {
-  const ID = req.params.ID;
+ExecutiveReports.get("/", function(req, res) {
+  // const ID = req.params.ID;
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -15,8 +15,8 @@ ExecutiveReports.get("/:ID", function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call GetMonthlyCasesDistributions(?)";
-      connection.query(sp, [ID], function(error, results, fields) {
+      let sp = "call GetMonthlyGraph()";
+      connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
             success: false,

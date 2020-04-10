@@ -233,8 +233,8 @@ class SideBar extends Component {
   };
   render() {
     let photostyle = {
-      height: 140,
-      width: 200,
+      height: 70,
+      width: 205,
       background: "#a7b1c2",
       margin: 10,
       "border-radius": 2
@@ -256,11 +256,7 @@ class SideBar extends Component {
             <li className="">
               <div className="dropdown profile-element">
                 <img
-                  src={
-                    process.env.REACT_APP_BASE_URL +
-                    "/profilepics/" +
-                    this.state.Logo
-                  }
+                  src={ require("./profilepics/download.png") }
                   style={photostyle}
                 />
               </div>
@@ -320,20 +316,44 @@ const Reports = props => {
         </li>
         {props.showmenuvalue ? (
           <ul className="nav nav-second-level">
-            {props.validaterole("Decision", "View") ? (
+            {props.validaterole("Monthly", "View") ? (
               <li>
-                <Link to="/Decision">
+                <Link to="/MonthlyRegistration">
                   <i className="fa fa-tasks" />
-                  Decisions
+                  Monthly Reports
                 </Link>
               </li>
             ) : null}
-
-            {props.validaterole("Summary", "View") ? (
+             {props.validaterole("Custom Reports", "View") ? (
               <li>
-                <Link to="/CaseSummary">
+                <Link to="/CustomReport">
                   <i className="fa fa-user-plus" />
                 Custom reports
+                </Link>
+              </li>
+            ) : null}
+            
+            {props.validaterole("Total Cost", "View") ? (
+              <li>
+                <Link to="/TravelledReports">
+                  <i className="fa fa-user-plus" />
+                  Travelled Applicant
+                </Link>
+              </li>
+            ) : null}
+             {props.validaterole("Total Cost", "View") ? (
+              <li>
+                <Link to="/Custom">
+                  <i className="fa fa-user-plus" />
+                  Total Cost
+                </Link>
+              </li>
+            ) : null}
+            {props.validaterole("Fail Applicants", "View") ? (
+              <li>
+                <Link to="/Custom">
+                  <i className="fa fa-user-plus" />
+                  Fail Applicant
                 </Link>
               </li>
             ) : null}
@@ -401,7 +421,7 @@ const Recruitment = props => {
                 </Link>
               </li>
             ) : null}
-                             {props.validaterole("Major Medical", "View") ? (
+             {props.validaterole("Major Medical", "View") ? (
               <li>
                 <Link to="/Major">
                   <i className="fa fa-tasks" />
@@ -409,11 +429,60 @@ const Recruitment = props => {
                 </Link>
               </li>
             ) : null}
-                             {props.validaterole("Contract Processing", "View") ? (
+              {props.validaterole("Contract Processing", "View") ? (
               <li>
                 <Link to="/Contract">
                   <i className="fa fa-tasks" />
                   Contract Processing
+                </Link>
+              </li>
+            ) : null}
+               {props.validaterole("NEAA", "View") ? (
+              <li>
+                <Link to="/NEAA">
+                  <i className="fa fa-tasks" />
+                  NEA
+                </Link>
+              </li>
+            ) : null}
+             {props.validaterole("Visa Prcoessing", "View") ? (
+              <li>
+                <Link to="/Visa">
+                  <i className="fa fa-tasks" />
+                  Visa Processing
+                </Link>
+              </li>
+            ) : null}
+               {props.validaterole("Attestation", "View") ? (
+              <li>
+                <Link to="/Attestation">
+                  <i className="fa fa-tasks" />
+                  Attestation
+                </Link>
+              </li>
+            ) : null}
+              
+               {props.validaterole("Ticketing", "View") ? (
+              <li>
+                <Link to="/Ticketing">
+                  <i className="fa fa-tasks" />
+                  Ticketing
+                </Link>
+              </li>
+            ) : null}
+               {props.validaterole("Final Medical", "View") ? (
+              <li>
+                <Link to="/Final">
+                  <i className="fa fa-tasks" />
+                  Final Medical
+                </Link>
+              </li>
+            ) : null}
+              {props.validaterole("Travelling", "View") ? (
+              <li>
+                <Link to="/Travelling">
+                  <i className="fa fa-tasks" />
+                  Travelling
                 </Link>
               </li>
             ) : null}
@@ -489,7 +558,7 @@ const SystemAdmin = props => {
 };
 
 const DashBoards = props => {
-  if (props.validaterole("DashBoards", "View")) {
+  if (props.validaterole("Dashboard", "View")) {
     return (
       <li className="">
         <Link to="/Home">
@@ -520,6 +589,22 @@ const Parameteres = props => {
                 <Link to="/Facility">
                   <i className="fa fa-user-plus " />
                   Medical Facility
+                </Link>
+              </li>
+            ) : null}
+              {props.validaterole("County", "View") ? (
+              <li>
+                <Link to="/Counties">
+                  <i className="fa fa-money" />
+                  Counties
+                </Link>
+              </li>
+            ) : null}
+            {props.validaterole("Country", "View") ? (
+              <li>
+                <Link to="/Countries">
+                  <i className="fa fa-money" />
+                  Countries
                 </Link>
               </li>
             ) : null}

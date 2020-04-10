@@ -167,16 +167,16 @@ class CustomReport extends Component {
     };
     let statusOptions = [
       {
-        value: "Closed",
-        label: "Closed"
+        value: "Travelled",
+        label: "Travelled"
       },
       {
-        value: "Pending Determination",
-        label: "Pending Determination"
+        value: "Defaulted",
+        label: "Defaulted"
       },
       {
-        value: "Withdrawn",
-        label: "Withdrawn"
+        value: "Returned",
+        label: "Returned"
       },
       {
         value: "All",
@@ -190,7 +190,7 @@ class CustomReport extends Component {
             <div className="col-lg-9">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <h2>Customize your Report</h2>
+                  <h2>Customize  Report</h2>
                 </li>
               </ol>
             </div>
@@ -234,7 +234,7 @@ class CustomReport extends Component {
                         />
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          TenderNo
+                          IDNumber
                         </label>
                       </div>
                     </div>
@@ -250,7 +250,7 @@ class CustomReport extends Component {
                         />{" "}
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          TenderName
+                          Fullname
                         </label>
                       </div>
                       <div className="col-md-6">
@@ -264,7 +264,7 @@ class CustomReport extends Component {
                         />
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          TenderValue
+                          cost
                         </label>
                       </div>
                     </div>
@@ -280,7 +280,7 @@ class CustomReport extends Component {
                         />{" "}
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          Application FilingDate
+                          Registration date
                         </label>
                       </div>
                       <div className="col-md-6">
@@ -294,7 +294,7 @@ class CustomReport extends Component {
                         />
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          Application ClosingDate
+                          Travelled date
                         </label>
                       </div>
                     </div>
@@ -310,7 +310,7 @@ class CustomReport extends Component {
                         />{" "}
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          PE
+                        Gender
                         </label>
                       </div>
                       <div className="col-md-6">
@@ -324,7 +324,7 @@ class CustomReport extends Component {
                         />
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          Applicant
+                          Age
                         </label>
                       </div>
                     </div>
@@ -340,7 +340,7 @@ class CustomReport extends Component {
                         />{" "}
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          Tender Type
+                          Application  stage
                         </label>
                       </div>
                       <div className="col-md-6">
@@ -354,7 +354,7 @@ class CustomReport extends Component {
                         />
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          Application Timing
+                          Application status
                         </label>
                       </div>
                     </div>
@@ -370,21 +370,7 @@ class CustomReport extends Component {
                         />{" "}
                         &nbsp;
                         <label htmlFor="All" className="font-weight-bold">
-                          DecisionDate
-                        </label>
-                      </div>
-                      <div className="col-md-6">
-                        <input
-                          className="checkbox"
-                          id="AwardDate"
-                          type="checkbox"
-                          name="AwardDate"
-                          defaultChecked={this.state.AwardDate}
-                          onChange={this.handleInputChange}
-                        />
-                        &nbsp;
-                        <label htmlFor="All" className="font-weight-bold">
-                          Occurrence of Breach
+                          
                         </label>
                       </div>
                     </div>
@@ -670,7 +656,7 @@ class CustomReport extends Component {
                     ) : (
                       <table className="table table-borderless table-sm">
                         <thead className="thead-light">
-                          <th>ApplicationNo</th>
+                          <th>IDNumber</th>
                           {this.state.TenderNo ? <th>TenderNo</th> : null}
                           {this.state.TenderName ? <th>TenderName</th> : null}
                           {this.state.TenderValue ? <th>TenderValue</th> : null}

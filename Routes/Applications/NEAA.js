@@ -1,11 +1,11 @@
 var express = require("express");
-var Minor = express();
+var NEAA = express();
 var mysql = require("mysql");
-var config = require("./../../DB");
-var Joi = require("joi");
+var config = require("../../DB");
 var con = mysql.createPool(config);
-var auth = require("./../../auth");
-Minor.get("/", function(req, res) {
+var Joi = require("joi");
+var auth = require("../../auth");
+NEAA.get("/", auth.validateRole("NEAA"), function(req, res) {
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -14,7 +14,7 @@ Minor.get("/", function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call getMinorMedical()";
+      let sp = "call GetNEAA()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -30,10 +30,7 @@ Minor.get("/", function(req, res) {
     }
   });
 });
-Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
-  req,
-  res
-) {
+NEAA.get("/:ID", auth.validateRole("NEAA"), function(req, res) {
   const ID = req.params.ID;
   con.getConnection(function(err, connection) {
     if (err) {
@@ -43,8 +40,8 @@ Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
       });
     } // not connected!
     else {
-      let sp = "call GetOneMinorMedical(?)";
-      connection.query(sp, [ID], function(error, results, fields) {
+      let sp = "call GetOneNEAA(?)";
+      connection.query(sp, ID, function(error, results, fields) {
         if (error) {
           res.json({
             success: false,
@@ -59,20 +56,27 @@ Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
     }
   });
 });
-Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
+NEAA.post("/", auth.validateRole("NEAA"), function(req, res) {
   const schema = Joi.object().keys({
-    Number:Joi.number()
-    .integer()
-    .min(1),
-      DOM:Joi.date().required(),
-      MedicalFacility: Joi.string().required(),
-      Result: Joi.string().required(),
-      Cost: Joi.string().required()
-  
+    Number:Joi.number().integer().min(1),
+    DOS:Joi.date().required(),
+    Approved_Status: Joi.string().required(),
+    DOA:Joi.date().required(),
+    Reason: Joi.string(),
+    RDate:Joi.date(),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost, res.locals.user];
+    let data = [
+      req.body.Number,
+      req.body.DOS,
+      req.body.Approved_Status,
+      req.body.DOA,
+      req.body.Reason,
+      req.body.RDate,
+      res.locals.user,
+  
+    ];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -81,7 +85,7 @@ Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveMinorMedical(?,?,?,?,?,?)";
+        let sp = "call SaveNEAA(?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -106,64 +110,65 @@ Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
     });
   }
 });
-Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
-  const schema = Joi.object().keys({
-    Number:Joi.number()
-    .integer()
-    .min(1),
-      DOM:Joi.date().required(),
-      MedicalFacility: Joi.string().required(),
-      Result: Joi.string().required(),
-      Cost: Joi.string().required()
+NEAA.put("/:ID", auth.validateRole("NEAA"), function (req, res) {
+    const schema = Joi.object().keys({
+        Number:Joi.number().integer().min(1),
+        DOS:Joi.date().required(),
+        Approved_Status: Joi.string().required(),
+        DOA:Joi.date().required(),
+        Reason: Joi.string(),
+        RDate:Joi.date(),
+    });
+    const result = Joi.validate(req.body, schema);
+    if (!result.error) {
+      const ID = req.params.ID;
+      let data = [
+        req.body.Number,
+        req.body.DOS,
+        req.body.Approved_Status,
+        req.body.DOA,
+        req.body.Reason,
+        req.body.RDate,
+        res.locals.user,
+        ID 
+      ];
+      con.getConnection(function (err, connection) {
+        if (err) {
+          res.json({
+            success: false,
+            message: err.message
+          });
+        } // not connected!
+        else {
+          let sp = "call UpdateNEAA(?,?,?,?,?,?,?,?)";
+          connection.query(sp, data, function (error, results, fields) {
+            if (error) {
+              res.json({
+                success: false,
+                message: error.message
+              });
+            } else {
+              res.json({
+                success: true,
+                message: "updated successfully"
+              });
+            }
+            connection.release();
+            // Don't use the connection here, it has been returned to the pool.
+          });
+        }
+      });
+    } else {
+      res.json({
+        success: false,
+        message: result.error.details[0].message
+      });
+    }
   });
-  const result = Joi.validate(req.body, schema);
-  if (!result.error) {
-    const ID = req.params.ID;
-    let data = [
-      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost,
-      res.locals.user,
-      ID
-    ];
-    con.getConnection(function (err, connection) {
-      if (err) {
-        res.json({
-          success: false,
-          message: err.message
-        });
-      } // not connected!
-      else {
-        let sp = "call UpdateMinorMedical(?,?,?,?,?,?,?)";
-        connection.query(sp, data, function (error, results, fields) {
-          if (error) {
-            res.json({
-              success: false,
-              message: error.message
-            });
-          } else {
-            res.json({
-              success: true,
-              message: "updated successfully"
-            });
-          }
-          connection.release();
-          // Don't use the connection here, it has been returned to the pool.
-        });
-      }
-    });
-  } else {
-    res.json({
-      success: false,
-      message: result.error.details[0].message
-    });
-  }
-});
-Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
-  req,
-  res
-) {
+NEAA.delete("/:ID", auth.validateRole("NEAA"), function(req, res) {
   const ID = req.params.ID;
+  let data = [ID, res.locals.user];
 
-  let data = [ID,res.locals.user];
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -172,7 +177,7 @@ Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
       });
     } // not connected!
     else {
-      let sp = "call DeleteMinorMedical(?,?)";
+      let sp = "call DeleteNEAA(?,?)";
       connection.query(sp, data, function(error, results, fields) {
         if (error) {
           res.json({
@@ -191,4 +196,4 @@ Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
     }
   });
 });
-module.exports = Minor;
+module.exports = NEAA;

@@ -11,25 +11,22 @@ import ReactExport from "react-data-export";
 var dateFormat = require("dateformat");
 var jsPDF = require("jspdf");
 require("jspdf-autotable");
-class Minor extends Component {
+class Passport extends Component {
   constructor() {
     super();
     this.state = {
-      Minor: [],
-      Facility: [],
+     Passport: [],
       Registration:[],
       privilages: [],
       profile: true,
-      MedicalFacilty:"",
-      IDNumber: "",
-      FullName:"",
       Number:"",
-      Phone:"",
-      DOM:"",
-      Cost:"500",
-      Resuit:"",
-      ID: "",
-      MedID:"",
+      POD:"" ,
+     Tracking_Number:"" ,
+     Status:"",
+     Passport_Collection_Date:"",
+    PassPortNumber:"" ,
+     Cost:"4606",
+    ID: "",
       isUpdate: false,
       selectedFile: null
     };
@@ -80,27 +77,6 @@ class Minor extends Component {
         swal("", err.message, "error");
       });
   };
-  fetchFacility = () => {
-    fetch("/api/Facility", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(Facility => {
-        if (Facility.length > 0) {
-          this.setState({ Facility: Facility });
-        } else {
-          swal("Oops!", Facility.message, "error");
-        }
-      })
-      .catch(err => {
-        swal("Oops!", err.message, "error");
-      });
-  };
-
   handleInputChange = event => {
     // event.preventDefault();
     // this.setState({ [event.target.name]: event.target.value });
@@ -114,142 +90,38 @@ class Minor extends Component {
   };
   Resetsate() {
     const data = {
-      MedicalFacilty:"",
-      IDNumber: "",
-      FullName:"",
-      Number:"",
-      Phone:"",
-      DOM:"",
-      Cost:"500",
-      Resuit:"",
-      ID: "",
-      isUpdate: false,
-      PIN: "",
-      Companyregistrationdate: "",
-      RegistrationNo: ""
-    
+        Number:"",
+        POD:"" ,
+        Tracking_Number:"" ,
+        Status:"",
+        Passport_Collection_Date:"",
+        PassPortNumber:"" ,
+        Cost:"4606",
+        ID: "",
     };
     this.setState(data);
   }
-  maxSelectFile = event => {
-    let files = event.target.files; // create file object
-    if (files.length > 1) {
-      const msg = "Only One image can be uploaded at a time";
-      event.target.value = null; // discard selected file
-      toast.warn(msg);
-      return false;
-    }
-    return true;
-  };
-  checkMimeType = event => {
-    let files = event.target.files;
-    let err = []; // create empty array
-    const types = ["image/png", "image/jpeg", "image/gif"];
-    for (var x = 0; x < files.length; x++) {
-      if (types.every(type => files[x].type !== type)) {
-        err[x] = files[x].type + " is not a supported format\n";
-        // assign message to array
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      // loop create toast massage
-      event.target.value = null;
-      toast.error(err[z]);
-    }
-    return true;
-  };
-  checkFileSize = event => {
-    let files = event.target.files;
-    let size = 2000000;
-    let err = [];
-    for (var x = 0; x < files.length; x++) {
-      if (files[x].size > size) {
-        err[x] = files[x].type + "is too large, please pick a smaller file\n";
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      toast.error(err[z]);
-      event.target.value = null;
-    }
-    return true;
-  };
-  onClickHandler = () => {
-    if (this.state.selectedFile) {
-      const data = new FormData();
-      // var headers = {
-      //   "Content-Type": "multipart/form-data",
-      //   "x-access-token": localStorage.getItem("token")
-      // };
-
-      //for single files
-      //data.append("file", this.state.selectedFile);
-      //for multiple files
-      for (var x = 0; x < this.state.selectedFile.length; x++) {
-        data.append("file", this.state.selectedFile[x]);
-      }
-      axios
-        .post("/api/upload", data, {
-          // receive two parameter endpoint url ,form data
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-            });
-          }
-        })
-        .then(res => {
-          this.setState({
-            Logo: res.data
-          });
-          // localStorage.setItem("UserPhoto", res.data);
-          toast.success("upload success");
+  fetchPassport = () => {
+    this.setState({ Passport: [] });
+    fetch("/api/Passport", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "x-access-token": localStorage.getItem("token")
+        }
+    })
+        .then(res => res.json())
+        .then(Passport => {
+            if (Passport.length > 0) {
+                this.setState({ Passport: Passport });
+            } else {
+                swal("", Passport.message, "error");
+            }
         })
         .catch(err => {
-          toast.error("upload fail");
+            swal("", err.message, "error");
         });
-    } else {
-      toast.warn("Please select a photo to upload");
-    }
-  };
-  onChangeHandler = event => {
-    //for multiple files
-    var files = event.target.files;
-    if (
-      this.maxSelectFile(event) &&
-      this.checkFileSize(event) &&
-      this.checkMimeType(event)
-    ) {
-      this.setState({
-        selectedFile: files,
-        loaded: 0
-      });
-
-      //for single file
-      // this.setState({
-      //   selectedFile: event.target.files[0],
-      //   loaded: 0
-      // });
-    }
-  };
-  fetchMinor = () => {
-    fetch("/api/Minor", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(Minor => {
-        if (Minor.length > 0) {
-          this.setState({ Minor: Minor });
-        } else {
-          swal("", Minor.message, "error");
-        }
-      })
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
+};
   componentWillUnmount() {}
   componentDidMount() {
     let token = localStorage.getItem("token");
@@ -268,9 +140,8 @@ class Minor extends Component {
         .then(response =>
           response.json().then(data => {
             if (data.success) {
-              this.fetchMinor();
+              this.fetchPassport();
               this.fetchRegistration();
-              this.fetchFacility();
               this.ProtectRoute();
             } else {
               localStorage.clear();
@@ -288,34 +159,39 @@ class Minor extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const data = {
-      Number: this.state.Number,
-      MedicalFacility: this.state.MedicalFacility,
-      Result: this.state.Result,
-      DOM:this.state.DOM,
-      Cost: this.state.Cost,
+        Number: this.state.Number,
+        POD: this.state.POD,
+        Tracking_Number: this.state.Tracking_Number,
+        Status:this.state.Status,
+        Passport_Collection_Date: this.state.Passport_Collection_Date,
+        PassPortNumber:this.state.PassPortNumber,
+        Cost:this.state.Cost   
      
     };
 
     if (this.state.isUpdate) {
-      this.UpdateData("/api/Minor/" + this.state.ID, data);
+      this.UpdateData("/api/Passport/" + this.state.ID, data);
     } else {
-      this.postData("/api/Minor", data);
+      this.postData("/api/Passport", data);
     }
   };
-  handleEdit = Minor => {
- 
+  handleEdit = Name => {
     const data = {
-      Number: Minor.Number,
-      DOM: dateFormat(
-        new Date(Minor.DOM).toLocaleDateString(),
-        "isoDate"
-      ),
-      Result: Minor.Result,
-      Cost: Minor.Cost,
-      MedicalFacility: Minor.MedicalFacility,
-      ID:Minor.ID
+        Number: Name.Number,
+        POD: dateFormat(
+            new Date(Name.POD).toLocaleDateString(),
+            "isoDate"
+          ),
+        Tracking_Number: Name.Tracking_Number,
+        Status: Name.Status,
+        Passport_Collection_Date: dateFormat(
+            new Date(Name.Passport_Collection_Date).toLocaleDateString(),
+            "isoDate"
+          ),
+        PassPortNumber:Name.PassPortNumber,
+        Cost:Name.Cost,
+        ID:Name.ID
     };
-
     this.setState(data);
     if (this.state.profile === false) {
       this.setState({ profile: true });
@@ -329,21 +205,24 @@ class Minor extends Component {
       { title: "Fullname", dataKey: "Fullname" },
       { title: "IDNumber", dataKey: "IDNumber" },
       { title: "Cost", dataKey: "Cost" },
-      { title: "MedicalFacility", dataKey: "MedicalFacility" },
+      { title: "POD", dataKey: "POD" },
+      { title: "PassPortNumber", dataKey: "PassPortNumber" },
+      { title: "Status", dataKey: "Status" },
+      { title: "Tracking_Number", dataKey: "Tracking_Number" },
     
     ];
 
-    const rows = [...this.state.Minor];
+    const rows = [...this.state.Passport];
 
     var doc = new jsPDF("p", "pt", "a2", "portrait");
 
     doc.autoTable(columns, rows, {
       margin: { top: 60 },
       beforePageContent: function(data) {
-        doc.text("RMS Minor Medical", 40, 50);
+        doc.text("Rms Passport processing and booking", 40, 50);
       }
     });
-    doc.save("RMS Minor medical.pdf");
+    doc.save("RMS passport processsing and booking.pdf");
   };
   ProtectRoute() {
     fetch("/api/UserAccess", {
@@ -412,7 +291,7 @@ class Minor extends Component {
       buttons: true,
     }).then(willDelete => {
       if (willDelete) {
-        return fetch("/api/Minor/" + k, {
+        return fetch("/api/Passport/" + k, {
           method: "Delete",
           headers: {
             "Content-Type": "application/json",
@@ -427,7 +306,7 @@ class Minor extends Component {
               } else {
                 swal("", data.message, "error");
               }
-              this.fetchMinor();
+              this.fetchPassport();
             })
           )
           .catch(err => {
@@ -447,7 +326,7 @@ class Minor extends Component {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchMinor();
+          this.fetchPassport();
 
           if (data.success) {
             swal("", "Record has been Updated!", "success");
@@ -477,7 +356,7 @@ class Minor extends Component {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchMinor();
+          this.fetchPassport();
 
           if (data.success) {
             swal("", "Record has been saved!", "success");
@@ -507,72 +386,92 @@ class Minor extends Component {
         label: k.IDNumber
       };
     });
-    const Facility = [...this.state.Facility].map((k, i) => {
-      return {
-        value: k.MedID,
-        label: k.Name
-      };
-    });
-    let GenderCategories = [
+    let Transcriptstatus = [
       {
-        value: "Fail",
-        label: "Fail"
+        value: "issued",
+        label: "issued"
       },
       {
-        value: "Pass",
-        label: "Pass"
-      }
+        value: "pending",
+        label: "pending"
+      },
     ];
+    let CertificateProcessing = [
+        {
+          value: "Queued",
+          label: "Queued"
+        },
+        {
+          value: "Processing",
+          label: "Processing"
+        },
+        {
+          value: "Issued",
+          label: "Issued"
+        },
+        {
+          value: "Others",
+          label: "Others"
+        }
+      ];
     const ColumnData = [
-      {
-        label: "Fullname",
-        field: "Fullname",
-        sort: "asc"
-      },
-      {
-        label: "IDNumber",
-        field: "IDNumber",
-        sort: "asc"
-      },
-      {
-        label: "Phone",
-        field: "Phone",
-        sort: "asc"
-      },
-      {
-        label: "MedicalFacility",
-        field: "MedicalFacility",
-        sort: "asc"
-      },
-      {
-        label: "Date Of Medical",
-        field: "DOM",
-        sort: "asc"
-      },
-      {
-        label: "Cost",
-        field: "Cost",
-        sort: "asc"
-      },
-      {
-        label: "action",
-        field: "action",
-        sort: "asc",
-        width: 200
-      }
-    ];
+        {
+          label: "Fullname",
+          field: "Fullname",
+          sort: "asc"
+        },
+        {
+          label: "IDNumber",
+          field: "IDNumber",
+          sort: "asc"
+        },  
+        {
+            label: "Photo Capture Date",
+            field: "POD",
+            sort: "asc"
+          },
+          {
+            label: "Status",
+            field: "Status",
+            sort: "asc"
+          },
+        {
+          label: "Passport Collection_Date",
+          field: "Passport_Collection_Date",
+          sort: "asc"
+        },
+        {
+          label: "Passport Number",
+          field: "PassPortNumber",
+          sort: "asc"
+        },
+        {
+            label: "Tracking Number",
+            field: "Tracking_Number",
+            sort: "asc"
+          },
+        {
+          label: "action",
+          field: "action",
+          sort: "asc",
+          width: 200
+        }
+      ];
     let Rowdata1 = [];
-    const rows = [...this.state.Minor];
+    const rows = [...this.state.Passport];
     if (rows.length > 0) {
       rows.map((k, i) => {
         let Rowdata = {
-          IDNumber: k.IDNumber,
-          Fullname: k.Fullname,
-          DOM: new Date(k.DOM).toLocaleDateString(),
-          Phone: k.Phone,
-          MedicalFacility: k.MedicalFacility,
-          Cost: k.Cost,
-          ID:k.ID,
+            Fullname: k.Fullname,
+            IDNumber: k.IDNumber,
+            Passport: k.Passport,
+            POD: new Date(k.POD).toLocaleDateString(),
+            Tracking_Number:k.Tracking_Number,
+            Passport_Collection_Date: new Date(k.Passport_Collection_Date).toLocaleDateString(),
+            Status:k.Status,
+            PassPortNumber:k.PassPortNumber,
+            Cost:k.Cost,
+            ID:k.ID,
           action: (
             <span>
               <a
@@ -622,13 +521,13 @@ class Minor extends Component {
               <div className="col-lg-9">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <h2>Minor Medical</h2>
+                    <h2>Passport processing</h2>
                   </li>
                 </ol>
               </div>
               <div className="col-lg-3">
                 <div className="row wrapper ">
-                  {this.validaterole("Minor Medical", "AddNew") ? (
+                  {this.validaterole("Passport processing", "AddNew") ? (
                     <button
                       type="button"
                       style={{ marginTop: 40 }}
@@ -639,7 +538,7 @@ class Minor extends Component {
                     </button>
                   ) : null}
                   &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
+                  {this.validaterole("Passport processing", "Export") ? (
                     <button
                       onClick={this.exportpdf}
                       type="button"
@@ -650,7 +549,7 @@ class Minor extends Component {
                     </button>
                   ) : null}
                   &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
+                  {this.validaterole("Passport processing", "Export") ? (
                     <ExcelFile
                       element={
                         <button
@@ -662,10 +561,10 @@ class Minor extends Component {
                         </button>
                       }
                     >
-                      <ExcelSheet data={rows} name="Minor Medical">
+                      <ExcelSheet data={rows} name="Passport processing">
                         <ExcelColumn label="Fullname" value="Fullname" />
                         <ExcelColumn label="IDNumber" value="IDNumber" />
-                        <ExcelColumn label="MedicalFacility" value="MedicalFacility" />
+                        <ExcelColumn label="DOT" value="DOT" />
                         <ExcelColumn label="Cost" value="Cost" />
                       </ExcelSheet>
                     </ExcelFile>
@@ -687,7 +586,7 @@ class Minor extends Component {
             <div className="col-lg-10">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <h2>Minor medical</h2>
+                  <h2>Passport processing</h2>
                 </li>
               </ol>
             </div>
@@ -713,7 +612,7 @@ class Minor extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="Number" className="font-weight-bold">
-                       IDNumber
+                       ID Number
                       </label>
                     </div>
                     <div class="col-sm-5">
@@ -727,19 +626,18 @@ class Minor extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
-                      <label for="Number" className="font-weight-bold">
-                        Medical Facility
+                    <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        Photo capture date
                       </label>
                     </div>
-                    <div class="col-sm-5">
-                      <Select
-                        name="MedicalFacility"
-                        value={Facility.filter(
-                          option => option.label === this.state.MedicalFacility
-                        )}
-                        onChange={this.handleSelectChange}
-                        options={Facility}
+                    <div class="col-sm-4">
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="POD"
+                        onChange={this.handleInputChange}
+                        value={this.state.POD}
                         required
                       />
                     </div>
@@ -749,32 +647,65 @@ class Minor extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
-                        Result
+                 Passport Status
                       </label>
                     </div>
                     <div class="col-sm-5">
                       <Select
-                        name="Result"
-                        value={GenderCategories.filter(
-                          option => option.label === this.state.Result
+                        name="Status"
+                        value={CertificateProcessing.filter(
+                          option => option.label === this.state.Status
                         )}
                         onChange={this.handleSelectChange}
-                        options={GenderCategories}
+                        options={CertificateProcessing}
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
-                        Date OF medical
+                        Passport Collection Date
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="Passport_Collection_Date"
+                        onChange={this.handleInputChange}
+                        value={this.state.Passport_Collection_Date}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                  <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Tracking Number
                       </label>
                     </div>
                     <div class="col-sm-5">
                       <input
-                        type="date"
+                        type="text"
                         class="form-control"
-                        name="DOM"
+                        name="Tracking_Number"
                         onChange={this.handleInputChange}
-                        value={this.state.DOM}
+                        value={this.state.Tracking_Number}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        passport Number
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="PassPortNumber"
+                        onChange={this.handleInputChange}
+                        value={this.state.PassPortNumber}
                         required
                       />
                     </div>
@@ -801,4 +732,4 @@ class Minor extends Component {
   }
 }
 
-export default Minor;
+export default Passport;

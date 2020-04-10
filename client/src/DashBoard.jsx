@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import Chart from "react-google-charts";
+import swal from "sweetalert";
 
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
@@ -14,12 +16,15 @@ class DashBoard extends Component {
   constructor() {
     super();
     this.state = {
+      Applications: [],
+      Data: [],
       ChangePassword: data.ChangePassword,
-      PendingApplication: [],
+      TotalApplicants: [],
+      SystemUsers:[],
+      TotalCost:[],
       ResolvedApplications: [],
       events: []
     };
-    this.fetchBookings = this.fetchBookings.bind(this);
   }
   //   {
   //   start: new Date(),
@@ -43,9 +48,54 @@ class DashBoard extends Component {
     console.log(start);
   };
 
-  fetchPendingApplication = () => {
-    fetch(
-      "/api/Dashboard/" + localStorage.getItem("UserName") + "/Notresolved",
+  fetchApplications = () => {
+    fetch("/api/Applications", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token")
+      }
+    })
+      .then(res => res.json())
+      .then(Applications => {
+        if (Applications.length > 0) {
+          this.setState({ Applications: Applications });
+        } else {
+          swal("", Applications.message, "error");
+        }
+      })
+      .catch(err => {
+        swal("", err.message, "error");
+      });
+  };
+
+  fetchData = () => {
+    this.setState({ FilePath: "" });
+      fetch("/api/ExecutiveReports/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": localStorage.getItem("token")
+        }
+      })
+        .then(res => res.json())
+        .then(Applications => {
+          if (Applications.length > 0) {
+            this.setState({ Data: Applications });
+          } else {
+            swal("", Applications.message, "error");
+          }
+        })
+        .catch(err => {
+          swal("", err.message, "error");
+        });
+    // } else {
+    //   swal("", "Select Date to Continue", "error");
+    // }
+  };
+  TotalApplicants = () => {
+       fetch(
+      "/api/Dashboard/" ,
       {
         method: "GET",
         headers: {
@@ -55,9 +105,9 @@ class DashBoard extends Component {
       }
     )
       .then(res => res.json())
-      .then(PendingApplication => {
-        if (PendingApplication.length > 0) {
-          this.setState({ PendingApplication: PendingApplication });
+      .then(TotalApplicants=> {
+        if (TotalApplicants.length > 0) {
+          this.setState({ TotalApplicants: TotalApplicants});
         } else {
           //swal("", PendingApplication.message, "error");
         }
@@ -66,76 +116,53 @@ class DashBoard extends Component {
         // swal("", err.message, "error");
       });
   };
-  fetchBookings = () => {
-    fetch("/api/CaseScheduling/All/AllBookings", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(Bookings => {
-        if (Bookings.length > 0) {
-          let Rowdata1 = [];
+  TotalCost = () => {
+    fetch(
+   "/api/TotalCost/" ,
+   {
+     method: "GET",
+     headers: {
+       "Content-Type": "application/json",
+       "x-access-token": localStorage.getItem("token")
+     }
+   }
+ )
+   .then(res => res.json())
+   .then(TotalCost=> {
+     if (TotalCost.length > 0) {
+       this.setState({ TotalCost: TotalCost});
+     } else {
+       //swal("", PendingApplication.message, "error");
+     }
+   })
+   .catch(err => {
+     // swal("", err.message, "error");
+   });
+};
 
-          if (Bookings.length > 0) {
-
-            Bookings.forEach(k => {
-              var newStr = k.Slot.substring(0, k.Slot.length - 1);
-              var newSlot = newStr.substring(0, newStr.length - 1);
-              var timeslot = newSlot.replace(".", ":");
-              if (timeslot.length == 4) {
-                let time1array = k.Slot.split(".");
-                if (+time1array[0] < +6) {
-                  var output = +time1array[0] + +12;
-                  let time = k.Date + "T" + output + ":00" + "+0300";
-                  var output1 = +output + +1;
-                  let Endtime = k.Date + "T" + output1 + ":00" + "+0300";
-
-                  const Rowdata = {
-                    start: new Date(time),
-                    end: new Date(Endtime),
-                    title: "CASE HEARING FOR APPLICATION " + k.Content
-                  };
-                  Rowdata1.push(Rowdata);
-                } else {
-                  var output = "0" + timeslot;
-                  let time = k.Date + "T" + output + "+0300";
-                  var output1 = +time1array[0] + +1;
-                  let Endtime = k.Date + "T" + output1 + ":00" + "+0300";
-                  const Rowdata = {
-                    start: new Date(time),
-                    end: new Date(Endtime),
-                    title: "CASE HEARING FOR APPLICATION " + k.Content
-                  };
-                  Rowdata1.push(Rowdata);
-                }
-              } else {
-                let time = k.Date + "T" + timeslot + "+0300";
-                let time1array = k.Slot.split(".");
-                var output = +time1array[0] + +1;
-                let Endtime = k.Date + "T" + output + ":00" + "+0300";
-                const Rowdata = {
-                  start: new Date(time),
-                  end: new Date(Endtime),
-                  title: "CASE HEARING FOR APPLICATION " + k.Content
-                };
-
-                Rowdata1.push(Rowdata);
-              }
-            });
-          }
-          console.log(Rowdata1)
-          this.setState({ events: Rowdata1 });
-        } else {
-          //swal("", Bookings.message, "error");
-        }
-      })
-      .catch(err => {
-        //swal("", err.message, "error");
-      });
-  };
+SystemUsers = () => {
+  fetch(
+ "/api/TotalUsers/" ,
+ {
+   method: "GET",
+   headers: {
+     "Content-Type": "application/json",
+     "x-access-token": localStorage.getItem("token")
+   }
+ }
+)
+ .then(res => res.json())
+ .then(SystemUsers=> {
+   if (SystemUsers.length > 0) {
+     this.setState({ SystemUsers: SystemUsers});
+   } else {
+     //swal("", PendingApplication.message, "error");
+   }
+ })
+ .catch(err => {
+   // swal("", err.message, "error");
+ });
+};
   componentDidMount() {
     let token = localStorage.getItem("token");
     if (token == null) {
@@ -152,9 +179,11 @@ class DashBoard extends Component {
         .then(response =>
           response.json().then(data => {
             if (data.success) {
-              this.fetchPendingApplication();
-
-              this.fetchBookings();
+              this.TotalApplicants();
+              this.SystemUsers();
+              this.TotalCost();
+              this.fetchApplications();
+              this.fetchData();
             } else {
               localStorage.clear();
               return (window.location = "/#/Logout");
@@ -167,253 +196,387 @@ class DashBoard extends Component {
         });
     }
   }
+  PrintFile = () => {
+    let filepath = process.env.REACT_APP_BASE_URL + "/Cases/" + this.state.File;
+    window.open(filepath);
+  };
+  formatNumber = num => {
+    let newtot = Number(num).toFixed(2);
+    return newtot.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+  };
   render() {
     const divStyle = {
       margin: "19px"
     };
+    let FormStyle = {
+      margin: "20px"
+      
+    };
+    const data = [["Month", "Registration"]];
+    [...this.state.Data].map((k, i) => {
+      let d = [k.Month, k.Count];
+      data.push(d);
+    });
 
     return (
       <div>
-        <div className="row" style={divStyle}>
-          <div className="col-lg-9 col-xs-6">
-            <DnDCalendar
-              defaultDate={new Date()}
-              defaultView="month"
-              events={this.state.events}
-              localizer={localizer}
-              onEventDrop={this.onEventDrop}
-              onEventResize={this.onEventResize}
-              resizable
-              style={{ height: "80vh" }}
-            />
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <h3>Pending Notifications</h3>
-            {this.state.PendingApplication.map((r, i) =>
+            <div className="row" style={divStyle}>
+            <div className="col-lg-3 col-xs-6">
+            {this.state.SystemUsers.map((r, i) =>
               i % 2 == 0 ? (
                 <div className="row">
                   <div className="col-lg-12 ">
-                    <div className="small-box bg-green">
+                    <div className="small-box bg-aqua">
                       <div className="inner">
-                        <h3>{r.Total}</h3>
-                        <p>{r.Description}</p>
+                        <h3>{r.SystemUsers}</h3>
+                        <p>System users</p>
                       </div>
                       <div className="icon">
                         <i className="ion ion-stats-bars" />
                       </div>
-
-                      {r.Category === "Deadline Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link
-                            to="/DeadlinerequestApproval"
-                            className="text-white"
-                          >
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Case Adjournment Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link
-                            to="/AdjournmentApproval"
-                            className="text-white"
-                          >
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Applications Fees Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link to="/FeesApproval" className="text-white">
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Preliminary Objecions Fees Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link
-                            to="/PreliminaryObjectionFees"
-                            className="text-white"
-                          >
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Case withdrawal Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link
-                            to="/CaseWithdrawalApproval"
-                            className="text-white"
-                          >
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-
-                      {r.Category === "Case Scheduling" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link to="/CaseScheduling" className="text-white">
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-
-                      {r.Category === "Applications Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link
-                            to="/ApplicationsApprovals"
-                            className="text-white"
-                          >
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Panel Formation" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link to="/Panels" className="text-white">
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Decision Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link to="/DecisionsApproval" className="text-white">
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
-                      {r.Category === "Panel Approval" ? (
-                        <a href="/#" className="small-box-footer ">
-                          <Link to="/PanelApproval" className="text-white">
-                            More info <i className="fa fa-arrow-circle-right" />
-                          </Link>
-                        </a>
-                      ) : null}
+                      <a href="/#" className="small-box-footer ">
+                                <Link to="/Registration" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
                     </div>
                   </div>
                 </div>
               ) : (
                   <div className="row">
-                    <div className="col-lg-12 ">
-                      <div className="small-box bg-aqua">
-                        <div className="inner">
-                          <h3>{r.Total}</h3>
-
-                          <p>{r.Description}</p>
-                        </div>
-                        <div className="icon">
-                          <i className="ion ion-stats-bars" />
-                        </div>
-                        {r.Category === "Deadline Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link
-                              to="/DeadlinerequestApproval"
-                              className="text-white"
-                            >
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Case Scheduling" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link to="/CaseScheduling" className="text-white">
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Applications Fees Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link to="/FeesApproval" className="text-white">
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Decision Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link to="/DecisionsApproval" className="text-white">
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Case Adjournment Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link
-                              to="/AdjournmentApproval"
-                              className="text-white"
-                            >
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Preliminary Objecions Fees Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link
-                              to="/PreliminaryObjectionFees"
-                              className="text-white"
-                            >
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Panel Formation" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link to="/Panels" className="text-white">
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Case withdrawal Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link
-                              to="/CaseWithdrawalApproval"
-                              className="text-white"
-                            >
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Applications Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link
-                              to="/ApplicationsApprovals"
-                              className="text-white"
-                            >
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                        {r.Category === "Panel Approval" ? (
-                          <a href="/#" className="small-box-footer ">
-                            <Link to="/PanelApproval" className="text-white">
-                              More info <i className="fa fa-arrow-circle-right" />
-                            </Link>
-                          </a>
-                        ) : null}
-                      </div>
-                    </div>
+                  
                   </div>
                 )
             )}
           </div>
-          {/* <div className="col-lg-3 col-xs-6">
-            <div className="small-box bg-green">
-              <div className="inner">
-                <h3>15</h3>
-
-                <p>Settled cases</p>
+            <div className="col-lg-3 col-xs-6">
+            {this.state.TotalApplicants.map((r, i) =>
+              i % 2 == 0 ? (
+                <div className="row">
+                  <div className="col-lg-12 ">
+                    <div className="small-box bg-green">
+                      <div className="inner">
+                        <h3>{r.totalApplicants}</h3>
+                        <p>Total  applicants</p>
+                      </div>
+                      <div className="icon">
+                        <i className="ion ion-stats-bars" />
+                      </div>
+                      <a href="/#" className="small-box-footer ">
+                                <Link to="/Registration" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                  <div className="row">
+                  
+                  </div>
+                )
+            )}
+          </div>
+        
+          <div className="col-lg-3 col-xs-6">
+            {this.state.TotalCost.map((r, i) =>
+              i % 2 == 0 ? (
+                <div className="row">
+                  <div className="col-lg-12 ">
+                    <div className="small-box bg-yellow">
+                      <div className="inner">
+                        <h3>{r.TotalCost}</h3>
+                        <p>Total Cost</p>
+                      </div>
+                      <div className="icon">
+                        <i className="ion ion-stats-bars" />
+                      </div>
+                      <a href="/#" className="small-box-footer ">
+                                <Link to="/Registration" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                  <div className="row">
+                  
+                  </div>
+                )
+            )}
+          </div>
+              <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-red">
+                  <div class="inner">
+                    <h3>0</h3>
+      
+                    <p>Fail applicants</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                  </div>
+                  <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
               </div>
-              <div className="icon">
-                <i className="ion ion-stats-bars" />
+            </div >
+       
+            <br />
+          <div className="row">
+            <div className="col-lg-1"></div>
+            <div className="col-lg-10 border border-success rounded bg-white">
+              <div style={FormStyle}>
+                <hr />
+                <br />
+                {this.state.Data.length > 0 ? (
+                  <div className="App">
+                    <Chart
+                      chartType="Bar"
+                      width={'100%'}
+                      height={'300px'}
+                      data={data}
+                      loader={<div>Loading Chart</div>}
+                      options={{
+                       // colors: [ '#fbdd64'],
+                        // Material design options
+                        chart: {
+                          title: "Monthly Registration"
+                        }
+                      }}
+                    />
+                  </div>
+                ) : null}
               </div>
-              <a href="/#" className="small-box-footer">
-                More info <i className="fa fa-arrow-circle-right" />
-              </a>
             </div>
-          </div> */}
-        </div>
+          </div>
+          <br />
+                {/* <div className="col-lg-3 col-xs-6">
+                  <h3>Pending Notifications</h3>
+                  {this.state.PendingApplication.map((r, i) =>
+                    i % 2 == 0 ? (
+                      <div className="row">
+                        <div className="col-lg-12 ">
+                          <div className="small-box bg-green">
+                            <div className="inner">
+                              <h3>{r.Total}</h3>
+                              <p>{r.Description}</p>
+                            </div>
+                            <div className="icon">
+                              <i className="ion ion-stats-bars" />
+                            </div>
+      
+                            {r.Category === "Deadline Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link
+                                  to="/DeadlinerequestApproval"
+                                  className="text-white"
+                                >
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Case Adjournment Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link
+                                  to="/AdjournmentApproval"
+                                  className="text-white"
+                                >
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Applications Fees Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link to="/FeesApproval" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Preliminary Objecions Fees Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link
+                                  to="/PreliminaryObjectionFees"
+                                  className="text-white"
+                                >
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Case withdrawal Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link
+                                  to="/CaseWithdrawalApproval"
+                                  className="text-white"
+                                >
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+      
+                            {r.Category === "Case Scheduling" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link to="/CaseScheduling" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+      
+                            {r.Category === "Applications Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link
+                                  to="/ApplicationsApprovals"
+                                  className="text-white"
+                                >
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Panel Formation" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link to="/Panels" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Decision Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link to="/DecisionsApproval" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                            {r.Category === "Panel Approval" ? (
+                              <a href="/#" className="small-box-footer ">
+                                <Link to="/PanelApproval" className="text-white">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                              </a>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                        <div className="row">
+                          <div className="col-lg-12 ">
+                            <div className="small-box bg-aqua">
+                              <div className="inner">
+                                <h3>{r.Total}</h3>
+      
+                                <p>{r.Description}</p>
+                              </div>
+                              <div className="icon">
+                                <i className="ion ion-stats-bars" />
+                              </div>
+                              {r.Category === "Deadline Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link
+                                    to="/DeadlinerequestApproval"
+                                    className="text-white"
+                                  >
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Case Scheduling" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link to="/CaseScheduling" className="text-white">
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Applications Fees Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link to="/FeesApproval" className="text-white">
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Decision Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link to="/DecisionsApproval" className="text-white">
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Case Adjournment Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link
+                                    to="/AdjournmentApproval"
+                                    className="text-white"
+                                  >
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Preliminary Objecions Fees Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link
+                                    to="/PreliminaryObjectionFees"
+                                    className="text-white"
+                                  >
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Panel Formation" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link to="/Panels" className="text-white">
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Case withdrawal Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link
+                                    to="/CaseWithdrawalApproval"
+                                    className="text-white"
+                                  >
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Applications Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link
+                                    to="/ApplicationsApprovals"
+                                    className="text-white"
+                                  >
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                              {r.Category === "Panel Approval" ? (
+                                <a href="/#" className="small-box-footer ">
+                                  <Link to="/PanelApproval" className="text-white">
+                                    More info <i className="fa fa-arrow-circle-right" />
+                                  </Link>
+                                </a>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                  )}
+                </div> */}
+                {/* <div className="col-lg-3 col-xs-6">
+                  <div className="small-box bg-green">
+                    <div className="inner">
+                      <h3>15</h3>
+      
+                      <p>Settled cases</p>
+                    </div>
+                    <div className="icon">
+                      <i className="ion ion-stats-bars" />
+                    </div>
+                    <a href="/#" className="small-box-footer">
+                      More info <i className="fa fa-arrow-circle-right" />
+                    </a>
+                  </div>
+                </div> */}
+              
       </div>
-    );
-  }
-}
-
-export default DashBoard;
+          );
+        }
+      }
+      
+      export default DashBoard;

@@ -32,6 +32,8 @@ Users.get("/", auth.validateRole("System Users"), function(req, res) {
     }
   });
 });
+
+
 Users.get("/:ID", auth.validateRole("System Users"), function(req, res) {
   const ID = req.params.ID;
   con.getConnection(function(err, connection) {

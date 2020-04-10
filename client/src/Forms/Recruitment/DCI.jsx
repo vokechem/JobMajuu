@@ -307,10 +307,17 @@ class DCI extends Component {
  
     const data = {
       Number: DCI.Number,
-      DOT:DCI.DOT,
+      DOT: dateFormat(
+        new Date(DCI.DOT).toLocaleDateString(),
+        "isoDate"
+      ),
       Certificate_status: DCI.Certificate_status,
       Cost: DCI.Cost,
-      DOC: DCI.DOC,
+      DOC: dateFormat(
+        new Date(DCI.DOC).toLocaleDateString(),
+        "isoDate"
+      ),
+      ID:DCI.ID
     };
 
     this.setState(data);
@@ -547,6 +554,16 @@ class DCI extends Component {
         sort: "asc"
       },
       {
+        label: "DOT",
+        field: "DOT",
+        sort: "asc"
+      },
+      {
+        label: "DOC",
+        field: "DOC",
+        sort: "asc"
+      },
+      {
         label: "Certificate_status",
         field: "Certificate_status",
         sort: "asc"
@@ -571,6 +588,8 @@ class DCI extends Component {
           IDNumber: k.IDNumber,
           Fullname: k.Fullname,
           Phone: k.Phone,
+          DOC: new Date(k.DOC).toLocaleDateString(),
+          DOT: new Date(k.DOT).toLocaleDateString(),
           Certificate_status: k.Certificate_status,
           Cost: k.Cost,
           action: (

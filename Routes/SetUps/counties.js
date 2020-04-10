@@ -1,11 +1,11 @@
 var express = require("express");
-var Registration = express();
+var counties = express();
 var mysql = require("mysql");
 var config = require("../../DB");
-var con = mysql.createPool(config);
 var Joi = require("joi");
-var auth = require("../../auth");
-Registration.get("/", auth.validateRole("Registration"), function(req, res) {
+var con = mysql.createPool(config);
+
+counties.get("/", function(req, res) {
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -14,7 +14,7 @@ Registration.get("/", auth.validateRole("Registration"), function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call getregistrations()";
+      let sp = "call getcounties()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -30,11 +30,7 @@ Registration.get("/", auth.validateRole("Registration"), function(req, res) {
     }
   });
 });
-
-Registration.get("/:ID", auth.validateRole("Registration"), function(
-  req,
-  res
-) {
+counties.get("/:ID", function(req, res) {
   const ID = req.params.ID;
   con.getConnection(function(err, connection) {
     if (err) {
@@ -44,8 +40,8 @@ Registration.get("/:ID", auth.validateRole("Registration"), function(
       });
     } // not connected!
     else {
-      let sp = "call GetOneRegistration(?)";
-      connection.query(sp, ID, function(error, results, fields) {
+      let sp = "call getOnecounty(?)";
+      connection.query(sp, [ID], function(error, results, fields) {
         if (error) {
           res.json({
             success: false,
@@ -60,62 +56,21 @@ Registration.get("/:ID", auth.validateRole("Registration"), function(
     }
   });
 });
-Registration.post("/", auth.validateRole("Registration"), function(req, res) {
+counties.post("/", function(req, res) {
   const schema = Joi.object().keys({
-    IDNumber:Joi.string().min(5).required(),
-    Fullname: Joi.string().min(5).required(),
-    Gender: Joi.string().min(1).required(),
-    phone: Joi.string().min(3).required(),
-    DOB:Joi.date().required(), 
-    Email: Joi.string().min(3).required(),
-    Country: Joi.string().min(3).required(),
-    County:Joi.string().required(),
-    Village: Joi.string(),
-    Religion: Joi.string().min(3).required(),
-    Marital: Joi.string().min(3).required(),
-    Height: Joi.string().min(3).required(),
-      Weight: Joi.string(),
-      photo:Joi.string().allow(null).allow(""),
-      FullPhoto:Joi.string().allow(null).allow(""),
-      BirthCer:Joi.string().required(),
-      Husband:Joi.string().allow(null).allow(""),
-      HusbandMobile:Joi.string().allow(null).allow(""),
-      HusbandID:Joi.string().allow(null).allow(""),
-     Languages:Joi.string().required(),
-     Skills:Joi.string().required(),
-     Classify:Joi.string().required(),
-     Agent:Joi.string().allow(null).allow(""), 
-     Job:Joi.string().required()  ,
+    Description: Joi.string()
+      .min(3)
+      .required(),
+    Code: Joi.string()
+      .min(1)
+      .required(),
+    UserName: Joi.string()
+      .min(1)
+      .required()
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [
-      req.body.IDNumber,
-      req.body.Fullname,
-      req.body.Gender,
-      req.body.phone,
-      req.body.DOB,
-      req.body.Email,
-      req.body.Country,
-      req.body.County,
-      req.body.Village,
-      req.body.Religion,
-      req.body.Marital,
-      req.body.Height,
-      req.body.Weight,
-      req.body.photo,
-      req.body.FullPhoto,
-      req.body.BirthCer,
-      req.body.Husband,
-      req.body.HusbandMobile,
-      req.body.HusbandID,
-      req.body.Languages,
-      req.body.Skills,
-      req.body.Classify,
-      req.body.Agent,
-      req.body.Job,
-      res.locals.user
-    ];
+    let data = [req.body.Code, req.body.Description, req.body.UserName];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -124,7 +79,7 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        let sp = "call Savecounties(?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -149,44 +104,23 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
     });
   }
 });
-Registration.put("/:ID", auth.validateRole("Registration"), function(
-  req,
-  res
-) {
+counties.put("/:ID", function(req, res) {
   const schema = Joi.object().keys({
-    Fullname: Joi.string().min(5).required(),
-    Gender: Joi.string().min(1).required(),
-    Phone: Joi.string().min(3).required(),
-    DOB:Joi.date().required(), 
-    Email: Joi.string().min(3).required(),
-    Country: Joi.string().min(3).required(),
-    Passport: Joi.string(),
-    Religion: Joi.string().min(3).required(),
-    Marital: Joi.string().min(3).required(),
-    Height: Joi.string().min(3).required(),
-    Weight: Joi.string(),
-    Languages: Joi.string(),
-    Skills: Joi.string()
+    Description: Joi.string()
+      .min(3)
+      .required(),
+    Code: Joi.string()
+      .min(1)
+      .required(),
+    UserName: Joi.string()
+      .min(1)
+      .required()
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
-    let data = [
-      req.body.Fullname,
-      req.body.Gender,
-      req.body.Phone,
-      req.body.Email,
-      req.body.DOB,
-      req.body.Country,
-      req.body.Passport,
-      req.body.Religion,
-      req.body.Marital,
-      req.body.Height,
-      req.body.Weight,
-      req.body.Languages,
-      req.body.Skills,
-      ID, 
-      res.locals.user];
+    let data = [ID, req.body.Description, req.body.UserName];
+
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -195,7 +129,7 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
         });
       } // not connected!
       else {
-        let sp = "call UpdateRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        let sp = "call Updatecounty(?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -205,7 +139,7 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
           } else {
             res.json({
               success: true,
-              message: "Updated"
+              message: "updated"
             });
           }
           connection.release();
@@ -220,13 +154,10 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
     });
   }
 });
-Registration.delete("/:ID", auth.validateRole("Registration"), function(
-  req,
-  res
-) {
+counties.delete("/:ID", function(req, res) {
   const ID = req.params.ID;
-  let data = [ID, res.locals.user];
 
+  let data = [ID, res.locals.user];
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -235,7 +166,7 @@ Registration.delete("/:ID", auth.validateRole("Registration"), function(
       });
     } // not connected!
     else {
-      let sp = "call DeleteRegistration(?,?)";
+      let sp = "call Deletecounty(?,?)";
       connection.query(sp, data, function(error, results, fields) {
         if (error) {
           res.json({
@@ -254,4 +185,4 @@ Registration.delete("/:ID", auth.validateRole("Registration"), function(
     }
   });
 });
-module.exports = Registration;
+module.exports = counties;

@@ -3,8 +3,8 @@ import swal from "sweetalert";
 import Table from "./../../Table";
 import TableWrapper from "./../../TableWrapper";
 import Select from "react-select";
-import axios from "axios";
 import { Progress } from "reactstrap";
+import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./../../Styles/tablestyle.css";
@@ -14,6 +14,7 @@ import Modal from "react-awesome-modal";
 var _ = require("lodash");
 let userdateils = localStorage.getItem("UserData");
 let data = JSON.parse(userdateils);
+
 var dateFormat = require("dateformat");
 class Registration extends Component {
   constructor() {
@@ -25,28 +26,35 @@ class Registration extends Component {
       Registration: [],
       Parent: [],
       Applications: [],
-      PE: [],
-      PaymentDetails: [],
-      BankSlips: [],
-      interestedparties: [],
-      Banks:[],
+      Countries:[],
+      counties:[],
       NextOFKin: [],
       Educational: [],
       MySiblings:[],
-      IDNumber:""  ,
-      Fullname:"" ,
-      Gender:""  ,
-      Phone:""  ,
-      DOB:""  ,
-      Email:""  ,
-      Country:""  ,
-      Passport:""  ,
-      Religion:""  ,
-      Marital:""  ,
-      Height:""  ,
-      Weight:"" ,
-      Languages:"" ,
-      Skills:"",
+     IDNumber:"",
+     Fullname:"",
+     Gender:"",
+     phone:"",
+     DOB:"",
+     Email:"",
+     Country:"",
+     County:"",
+     Village:"",
+     Religion:"",
+     Marital:"",
+     Height:"",
+     Weight:"",
+     photo:"",
+     FullPhoto:"",
+     BirthCer:"",
+     Husband:"",
+     HusbandMobile:"",
+     HusbandID:"",
+     Languages:"",
+     Skills:"",
+     Classify:"",
+     Job:"",
+     selectedFile: null,
       Decription:"",
       Period:"",
       UserGroup:"",
@@ -81,98 +89,52 @@ class Registration extends Component {
        KinName:"",
        CurrentResident:"",
        Contact:"",
-      Today: dateFormat(new Date().toLocaleDateString(), "isoDate"),
-      TenderNo: "",
-      TenderID: "",
-      ApplicationCreated_By: "",
-      TenderValue: 0,
-      ApplicationID: "",
-      TenderName: "",
-      PaymentType:"",
-      PEID: "",
-      StartDate: "",
-      ClosingDate: "",
-      ApplicationREf: "",
-      ApplicantID: "",
-      AdendumDescription: "",
-      EntryType: "",
-      RequestDescription: "",
-      GroundDescription: "",
+     
       profile: true,
       summary: false,
       IsUpdate: false,
       openPaymentModal: false,
-      TenderTypes: [],
       selectedFile: null,
       loaded: 0,
+      loaded1: 0,
       DocumentDescription: "",
-      AddedAdendums: [],
-      AdendumStartDate: "",
-      RequestsAvailable: false,
-      GroundsAvailable: false,
-      AdendumsAvailable: false,
-      AdendumClosingDate: "",
-      AdendumNo: "",
-      AddAdedendums: false,
-      ApplicantDetails: [],
-      Applicantname: "",
-      ApplicationGrounds: [],
-      ApplicationDocuments: [],
-      Applicationfees: [],
-      FilingDate: "",
-      PEName: "",
-      ApplicationNo: "",
       openView: false,
       DocumentsAvailable: false,
-      GroundNO: "",
-      ApplicantLocation: "",
-      ApplicantMobile: "",
-      ApplicantEmail: "",
-      ApplicantPIN: "",
-      ApplicantWebsite: "",
-      PEPOBox: "",
-      PEPostalCode: "",
-      PETown: "",
-      PEPostalCode: "",
-      PEMobile: "",
-      PEEmail: "",
-      PEWebsite: "",
-      TotalAmountdue: "",
-      TenderType: "",
-      ApplicantPostalCode: "",
-      ApplicantPOBox: "",
-      ApplicantTown: "",
-      
-      AddInterestedParty: false,
-      alert: null,
-      Timer: "",
-      Unascertainable: false,
-      Ascertainable: false,
-      ShowPaymentDetails: false,
-      Status:"",
-      AmountPaid: "",
-      DateofPayment: "",
-      PaymentReference: "",
-      PaidBy: "",
-      paymenttypes:[],
-      PaymentType:"",
-      ChequeDate:"",
-      CHQNO:""
+     
     };
     this.handViewRegistration = this.handViewRegistration.bind(this);
     this.Resetsate = this.Resetsate.bind(this);
     this.SaveApplication = this.SaveApplication.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.SaveTenderdetails = this.SaveTenderdetails.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
+    this.SaveRegistration = this.SaveRegistration.bind(this);
     this.CompletedApplication = this.CompletedApplication.bind(this);
   }
-  handleSelectChange = (UserGroup, actionMeta) => {
-    if (actionMeta.name === "UserGroup") {
-      this.setState({ UserGroupID: UserGroup.value });
-      this.setState({ [actionMeta.name]: UserGroup.label });
+  handleSelectChange = (Countries, actionMeta) => {
+    if (actionMeta.name == "Country") {
+      this.setState({ ID: Countries.value });
+      this.setState({ [actionMeta.name]: Countries.label });
     } else {
-      this.setState({ [actionMeta.name]: UserGroup.value });
+      this.setState({ ID: Countries.value });
+      this.setState({ [actionMeta.name]: Countries.label });
     }
+  };
+  handleSelectChange = (UserGroup, actionMeta) => {
+         
+   
+    
+    let itemobject=this.state.Items.filter(
+      option =>
+        option.ItemID ===  UserGroup.value
+    )
+    if(itemobject[0].ItemCategory ===  "Agent" || itemobject[0].ItemCategory ===  "Refferal" ){
+      this.setState({showrx:true,msg:"", [actionMeta.name]: UserGroup.value });
+    }else{
+      this.setState({showrx:false,msg:"", [actionMeta.name]: UserGroup.value });
+     
+    }
+ 
+    
   };
   checkDocumentRoles = CreatedBy => {
     if (this.state.Board) {
@@ -184,10 +146,9 @@ class Registration extends Component {
 
     return false;
   };
-  fetchBanks = () => {
-    this.setState({ Banks: [] });
-   
-    fetch("/api/Banks" , {
+  
+  fetchcounties = () => {
+    fetch("/api/counties", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -195,20 +156,19 @@ class Registration extends Component {
       }
     })
       .then(res => res.json())
-      .then(Banks => {
-        if (Banks.length > 0) {
-          this.setState({ Banks: Banks });
-         
+      .then(counties => {
+        if (counties.length > 0) {
+          this.setState({ counties: counties });
+        } else {
+          swal("", counties.message, "error");
         }
       })
       .catch(err => {
         swal("", err.message, "error");
       });
   };
-  fetchPaymentTypes = () => {
-    this.setState({ paymenttypes: [] });
-
-    fetch("/api/paymenttypes", {
+  fetchcountries = () => {
+    fetch("/api/Countries", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -216,10 +176,11 @@ class Registration extends Component {
       }
     })
       .then(res => res.json())
-      .then(paymenttypes => {
-        if (paymenttypes.length > 0) {
-          this.setState({ paymenttypes: paymenttypes });
-
+      .then(Countries => {
+        if (Countries.length > 0) {
+          this.setState({ Countries: Countries });
+        } else {
+          swal("", Countries.message, "error");
         }
       })
       .catch(err => {
@@ -303,88 +264,6 @@ class Registration extends Component {
         swal("", err.message, "error");
       });
   };
-  fetchApplicationGrounds = Applicationno => {
-    
-    fetch("/api/grounds/" + Applicationno, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(ApplicationGrounds => {
-        if (ApplicationGrounds.length > 0) {
-          this.setState({ ApplicationGrounds: ApplicationGrounds });
-        }
-      })
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
-  fetchTenderAdendums = TenderID => {
-    fetch("/api/tenderaddendums/" + TenderID, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(AddedAdendums => {
-        if (AddedAdendums.length > 0) {
-          this.setState({ AddedAdendums: AddedAdendums });
-          this.setState({ AdendumsAvailable: true });
-        } else {
-          this.setState({ AddAdedendums: false });
-          this.setState({ AdendumsAvailable: false });
-        }
-      })
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
-  fetchApplicationfees = Applicationno => {
-    this.setState({ Applicationfees: [] });
-    this.setState({ TotalAmountdue: "" });
-    fetch("/api/applicationfees/" + Applicationno, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(Applicationfees => {
-        if (Applicationfees.length > 0) {
-          this.setState({ Applicationfees: Applicationfees });
-          this.setState({ TotalAmountdue: Applicationfees[0].total });
-        }
-      })
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
-  fetchApplicationDocuments = Applicationno => {
-    fetch("/api/applicationdocuments/" + Applicationno, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(ApplicationDocuments => {
-        if (ApplicationDocuments.length > 0) {
-          this.setState({ ApplicationDocuments: ApplicationDocuments });
-        } else {
-          swal("", ApplicationDocuments.message, "error");
-        }
-      })
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
   fetchApplicantDetails = () => {
     fetch("/api/Registration/", {
       method: "GET",
@@ -399,18 +278,25 @@ class Registration extends Component {
           this.setState({
   
             Gender: ApplicantDetails[0].Gender,
-            Phone: ApplicantDetails[0].Phone,
+            phone: ApplicantDetails[0].phone,
             DOB: ApplicantDetails[0].DOB,
             Email: ApplicantDetails[0].Email,
             Country: ApplicantDetails[0].Country,
-            Passport: ApplicantDetails[0].Passport,
+            County:ApplicantDetails[0].County,
+            BirthCer: ApplicantDetails[0].BirthCer,
             Religion: ApplicantDetails[0].Religion,
             Marital: ApplicantDetails[0].Marital,
             Height: ApplicantDetails[0].Height,
             Weight: ApplicantDetails[0].Weight,
-            Languages: ApplicantDetails[0].Languages,
+            Village:ApplicantDetails[0].Village,
+            Languages:ApplicantDetails[0].Languages,
             Skills: ApplicantDetails[0].Skills,
-            IDNumber:ApplicantDetails[0].IDNumber
+            IDNumber:ApplicantDetails[0].IDNumber,
+            Classify:ApplicantDetails[0].Classify,
+            Agent:ApplicantDetails[0].Agent,
+            Job:ApplicantDetails[0].Job,
+            photo:ApplicantDetails[0].photo,
+            FullPhoto:ApplicantDetails[0].FullPhoto,
           });
           this.fetchMyApplications(ApplicantDetails[0].IDNumber);
         } else {
@@ -426,110 +312,6 @@ class Registration extends Component {
       alert: null
     });
   }
-  DeleteRequest = d => {
-    const data = {
-      ApplicationID: this.state.ApplicationID,
-      EntryType: d.EntryType,
-      Description: d.Description
-    };
-
-    return fetch("/api/grounds/" + 1, {
-      method: "Delete",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response =>
-        response.json().then(data => {
-          if (data.success) {
-            var rows = [...this.state.ApplicationGrounds];
-            const filtereddata = rows.filter(
-              item => item.Description !== d.Description
-            );
-            this.setState({ ApplicationGrounds: filtereddata });
-          } else {
-            swal("", "Remove Failed", "error");
-          }
-        })
-      )
-      .catch(err => {
-        swal("", "Remove Failed", "error");
-      });
-  };
-  handleDeleteRequest = d => {
-    const data = {
-      ApplicationID: this.state.ApplicationID,
-      EntryType: d.EntryType,
-      Description: d.Description
-    };
-
-    swal({
-      text: "Are you sure that you want to remove this record?",
-      icon: "warning",
-      dangerMode: true,
-      buttons: true
-    }).then(willDelete => {
-      if (willDelete) {
-        return fetch("/api/grounds/" + 1, {
-          method: "Delete",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": localStorage.getItem("token")
-          },
-          body: JSON.stringify(data)
-        })
-          .then(response =>
-            response.json().then(data => {
-              if (data.success) {
-                var rows = [...this.state.ApplicationGrounds];
-                const filtereddata = rows.filter(
-                  item => item.Description !== d.Description
-                );
-                this.setState({ ApplicationGrounds: filtereddata });
-              } else {
-                swal("", "Remove Failed", "error");
-              }
-            })
-          )
-          .catch(err => {
-            swal("", "Remove Failed", "error");
-          });
-      }
-    });
-  };
-  handleDeleteInterestedparty = d => {
-    swal({
-      text: "Are you sure that you want to remove this record?",
-      icon: "warning",
-      dangerMode: true,
-      buttons: true
-    }).then(willDelete => {
-      if (willDelete) {
-        return fetch("/api/interestedparties/" + d.ID, {
-          method: "Delete",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": localStorage.getItem("token")
-          }
-        })
-          .then(response =>
-            response.json().then(data => {
-              if (data.success) {
-                toast.success("Removed successfully");
-                this.fetchinterestedparties(this.state.ApplicationID);
-              } else {
-                toast.error("Remove Failed");
-              }
-            })
-          )
-          .catch(err => {
-            toast.error("Remove Failed");
-          });
-      }
-    });
-  };
   handleDeleteGuardian = d => {
     swal({
       text: "Are you sure that you want to remove this record?",
@@ -689,467 +471,207 @@ class Registration extends Component {
       }
     });
   };
-  handleDeleteGround = d => {
-    const data = {
-      ApplicationID: this.state.ApplicationID,
-      EntryType: d.EntryType,
-      Description: d.Description
-    };
-
-    swal({
-      text: "Are you sure that you want to remove this record?",
-      icon: "warning",
-      dangerMode: true,
-      buttons: true
-    }).then(willDelete => {
-      if (willDelete) {
-        return fetch("/api/grounds/" + 1, {
-          method: "Delete",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": localStorage.getItem("token")
-          },
-          body: JSON.stringify(data)
-        })
-          .then(response =>
-            response.json().then(data => {
-              if (data.success) {
-                var rows = [...this.state.ApplicationGrounds];
-                const filtereddata = rows.filter(
-                  item => item.Description !== d.Description
-                );
-                this.setState({ ApplicationGrounds: filtereddata });
-              } else {
-                swal("", data.message, "error");
-              }
-            })
-          )
-          .catch(err => {
-            swal("", err.message, "error");
-          });
-      }
-    });
-  };
+ 
   SaveRegistration = event => {
       event.preventDefault();
       const data = {
         IDNumber: this.state.IDNumber,
         Fullname: this.state.Fullname,
         Gender: this.state.Gender,
-        Phone: this.state.Phone,
+        phone: this.state.phone,
         DOB: this.state.DOB,
         Email: this.state.Email,
         Country: this.state.Country,
-        Passport: this.state.Passport,
+        County: this.state.County,
+        Village: this.state.Village,
         Religion: this.state.Religion,
         Marital: this.state.Marital,
         Height: this.state.Height,
         Weight: this.state.Weight,
+        photo: this.state.photo,
+        FullPhoto: this.state.FullPhoto,
+        BirthCer: this.state.BirthCer,
+        Husband: this.state.Husband,
+        HusbandMobile: this.state.HusbandMobile,
+        HusbandID: this.state.HusbandID,
         Languages: this.state.Languages,
         Skills: this.state.Skills,
+        Classify: this.state.Classify,
+        Agent: this.state.Agent,
+        Job: this.state.Job,
       };
         this.postData("/api/Registration", data);
     };
-  UpdateTenderdetails = () => {
-    if (this.state.TenderType === "B") {
-      if (!this.state.TenderCategory) {
-        toast.error("Tender category is required.");
-        return;
-      }
-      if (!this.state.TenderSubCategory) {
-        toast.error("Tender subcategory is required.");
-        return;
-      }
-    }
-    let data = {
-      TenderNo: this.state.TenderNo,
-      TenderName: this.state.TenderName,
-      PEID: this.state.PEID,
-      StartDate: this.state.StartDate,
-      ClosingDate: this.state.ClosingDate,
-      TenderValue: this.state.TenderValue,
-      TenderType: this.state.TenderType,
-      TenderSubCategory: this.state.TenderSubCategory,
-      TenderCategory: this.state.TenderCategory
-    };
-
-    fetch("/api/tenders/" + this.state.TenderID, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response =>
-        response.json().then(data => {
-          if (data.success) {
-            this.UpdateApplication();
-          } else {
-            swal("", data.message, "error");
-          }
-        })
-      )
-      .catch(err => {
-        swal("!", err.message, "error");
-      });
-  };
-  UpdateApplication = () => {
-    let data = {
-      TenderID: this.state.TenderID,
-      ApplicantID: this.state.ApplicantID,
-      PEID: this.state.PEID
-    };
-    fetch("/api/applications/" + this.state.ApplicationNo, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response =>
-        response.json().then(data => {
-          if (data.success) {
-            let newdata = {
-              TenderValue: "0",
-              TenderType: "",
-              TenderSubCategory: "",
-              TenderCategory: ""
-            };
-            this.setState(newdata);
-            this.UpdateApplicationFees();
-          } else {
-            swal("", data.message, "error");
-          }
-        })
-      )
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
-  UpdateApplicationFees() {
-    fetch("/api/applicationfees/" + this.state.ApplicationID, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(response =>
-        response.json().then(data => {
-          if (data.success) {
-            toast.success("Information updated");
-            this.fetchApplicationfees(this.state.ApplicationID);
-          } else {
-            toast.error(data.message);
-            // swal("", data.message, "error");
-          }
-        })
-      )
-      .catch(err => {
-        toast.error(err.message);
-        // swal("", err.message, "error");
-      });
-  }
+ 
   SubmitApplicationForReview = () => {
     this.SubmitApplication();
     this.sendApproverNotification();
   }
-  SavePaymentdetails = () => {
-    if (!this.state.DateofPayment) {
-      swal("", "Date of payment is required", "error");
-      return;
+  maxSelectFile = event => {
+    let files = event.target.files; // create file object
+    if (files.length > 1) {
+      const msg = "Only 1 image can be uploaded at a time";
+      event.target.value = null; // discard selected file
+      toast.warn(msg);
+      return false;
     }
-    if (!this.state.PaymentReference) {
-      swal("", "Reference is required", "error");
-      return;
-    }
-    if (!this.state.AmountPaid) {
-      swal("", "Amount paid is required", "error");
-      return;
-    }
-    if (!this.state.PaidBy) {
-      swal("", "Paid by is required", "error");
-      return;
-    }
-    let data = {
-      ApplicationID: this.state.ApplicationID,
-      Paidby: this.state.PaidBy,
-      Reference: this.state.PaymentReference,
-      DateOfpayment: this.state.DateofPayment,
-      AmountPaid: this.state.AmountPaid,
-      PaymentType: this.state.PaymentType,
-      ChequeDate: this.state.ChequeDate,
-      CHQNO: this.state.CHQNO,
-      Category: "Applicationfees"
-    };
-   
-    if (+this.state.TotalAmountdue > +this.state.AmountPaid) {
-      swal({
-        text: "Amount paid is less than amount due.Do you want to Continue",
-        icon: "warning",
-        dangerMode: true,
-        buttons: true
-      }).then(willDelete => {
-        if (willDelete) {
-          fetch("/api/applicationfees/1/Paymentdetails", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-access-token": localStorage.getItem("token")
-            },
-            body: JSON.stringify(data)
-          })
-            .then(response =>
-              response.json().then(data => {
-                if (data.success) {
-                  //toast.success("Payment details save successfuly");
-                  swal("","Payment details save successfuly","success")
-                 
-                } else {
-                  toast.error(data.message);
-                }
-              })
-            )
-            .catch(err => {
-              toast.error(err.message);
-            });
-        }
-      });
-    } else {
-      fetch("/api/applicationfees/1/Paymentdetails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-              toast.success("Payment details save successfuly");
-              swal("", "Payment details save successfuly", "success")
-              // this.SubmitApplication();
-              // this.sendApproverNotification();
-            } else {
-              toast.error(data.message);
-            }
-          })
-        )
-        .catch(err => {
-          toast.error(err.message);
-        });
-    }
+    return true;
   };
+  checkMimeType = event => {
+    let files = event.target.files;
+    let err = []; // create empty array
+    const types = ["image/png", "image/jpeg", "image/gif"];
+    for (var x = 0; x < files.length; x++) {
+      if (types.every(type => files[x].type !== type)) {
+        err[x] = files[x].type + " is not a supported format\n";
+        // assign message to array
+      }
+    }
+    for (var z = 0; z < err.length; z++) {
+      // loop create toast massage
+      event.target.value = null;
+      toast.error(err[z]);
+    }
+    return true;
+  };
+  checkFileSize = event => {
+    let files = event.target.files;
+    let size = 2000000;
+    let err = [];
+    for (var x = 0; x < files.length; x++) {
+      if (files[x].size > size) {
+        err[x] = files[x].type + "is too large, please pick a smaller file\n";
+      }
+    }
+    for (var z = 0; z < err.length; z++) {
+      toast.error(err[z]);
+      event.target.value = null;
+    }
+    return true;
+  };
+  onClickHandler = () => {
+    if (this.state.selectedFile) {
+      const data = new FormData();
+      // var headers = {
+      //   "Content-Type": "multipart/form-data",
+      //   "x-access-token": localStorage.getItem("token")
+      // };
 
-  SaveTenderdetails(Timer) {
-    if (this.state.TenderType === "B") {
-      if (!this.state.TenderCategory) {
-        toast.error("Tender category is required.");
-        return;
-      } else {
-        if (this.state.TenderCategory === "Other Tenders") {
-        } else {
-          if (!this.state.TenderSubCategory) {
-            toast.error("Tender subcategory is required.");
-            return;
+      //for single files
+      //data.append("file", this.state.selectedFile);
+      //for multiple files
+      for (var x = 0; x < this.state.selectedFile.length; x++) {
+        data.append("file", this.state.selectedFile[x]);
+      }
+      axios
+        .post("/api/Uploads/Passport", data, {
+          // receive two parameter endpoint url ,form data
+          onUploadProgress: ProgressEvent => {
+            this.setState({
+              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
+            });
           }
-        }
-      }
-    }
-    if (this.state.TenderType === "B") {
-      let data = {
-        TenderNo: this.state.TenderNo,
-        TenderName: this.state.TenderName,
-        PEID: this.state.PEID,
-        StartDate: this.state.StartDate,
-        ClosingDate: this.state.ClosingDate,
-        TenderValue: 0,
-        TenderType: this.state.TenderType,
-        TenderSubCategory: this.state.TenderSubCategory,
-        TenderCategory: this.state.TenderCategory,
-        Timer: Timer
-      };
-      fetch("/api/tenders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-              this.setState({ TenderID: data.results[0].TenderID });
-              this.SaveApplication(data.results[0].TenderID);
-              if (this.state.AdendumDescription) {
-                //this.saveTenderAdendums(data.results[0].TenderID);
-              }
-              //document.getElementById("nav-profile-tab").click();
-            } else {
-              toast.error(data.message);
-              // swal("", data.message, "error");
-            }
-          })
-        )
-        .catch(err => {
-          toast.error(err.message);
-          //swal("", err.message, "error");
-        });
-    } else {
-      let data = {
-        TenderNo: this.state.TenderNo,
-        TenderName: this.state.TenderName,
-        PEID: this.state.PEID,
-        StartDate: this.state.StartDate,
-        ClosingDate: this.state.ClosingDate,
-        TenderValue: this.state.TenderValue,
-        TenderType: this.state.TenderType,
-        TenderSubCategory: this.state.TenderSubCategory,
-        TenderCategory: this.state.TenderCategory,
-        Timer: Timer
-      };
-      fetch("/api/tenders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-              this.setState({ TenderID: data.results[0].TenderID });
-              this.SaveApplication(data.results[0].TenderID);
-              if (this.state.AdendumDescription) {
-                //this.saveTenderAdendums(data.results[0].TenderID);
-              }
-              //document.getElementById("nav-profile-tab").click();
-            } else {
-              toast.error(data.message);
-              // swal("", data.message, "error");
-            }
-          })
-        )
-        .catch(err => {
-          toast.error(err.message);
-          //swal("", err.message, "error");
-        });
-    }
-  }
-  saveGroundsDescriptions(EntryType) {
-    if (this.state.ApplicationID) {
-      let datatosave = {
-        ApplicationID: this.state.ApplicationID,
-        EntryType: EntryType,
-        Description: this.state.GroundDescription,
-        GroundNO: this.state.GroundNO
-      };
-      fetch("/api/grounds", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(datatosave)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-             
-              var rows = this.state.ApplicationGrounds;
-              rows.push(datatosave);
-              this.setState({ ApplicationGrounds: rows ,
-              GroundDescription: "" ,
-              GroundsAvailable: true ,
-               open: false ,
-              GroundNO: "" });
-              toast.success("Saved Successfuly");
-            } else {
-              toast.error("Could not be added please try again");
-              // swal("", , "error");
-            }
-          })
-        )
-        .catch(err => {
-          toast.error("Could not be added please try again");
-        });
-    } else {
-      toast.error(
-        "Please ensure You have filled tender details before filling grounds and requests."
-      );
-    }
-  }
-  fetchAdditionalSubmisions = ApplicationID => {
-    this.setState({
-      AdditionalSubmisions: []
-    });
-    fetch("/api/additionalsubmissions/" + ApplicationID + "/Applicant", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(AdditionalSubmisions => {
-        if (AdditionalSubmisions.length > 0) {
+        })
+        .then(res => {
           this.setState({
-            AdditionalSubmisions: AdditionalSubmisions
+            photo: res.data
           });
-        } else {
-          toast.error(AdditionalSubmisions.message);
-        }
-      })
-      .catch(err => {
-        toast.error(err.message);
-      });
-  };
-  saveRequests(EntryType) {
-    if (this.state.ApplicationID) {
-      let datatosave = {
-        ApplicationID: this.state.ApplicationID,
-        EntryType: EntryType,
-        Description: this.state.RequestDescription,
-        GroundNO: this.state.GroundNO
-      };
-      fetch("/api/grounds", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(datatosave)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-              // this.setState({ Grounds: datatosave });
-              var rows = this.state.ApplicationGrounds;
-              rows.push(datatosave);
-              this.setState({ ApplicationGrounds: rows ,
-               RequestDescription: "" ,
-               RequestsAvailable: true ,
-               GroundNO: "" , openRequest: false });
-              toast.success("Saved Successfuly");
-            } else {
-              toast.error("Could not be added please try again");
-            }
-          })
-        )
+          localStorage.setItem("photo", res.data);
+          toast.success("upload success");
+          const data = {
+            photo: res.data
+          };
+          this.postData(data);
+        })
         .catch(err => {
-          toast.error("Could not be added please try again");
+          toast.error("upload fail");
         });
     } else {
-      toast.error(
-        "Please ensure You have filled tender details before filling grounds and requests."
-      );
+      toast.warn("Please select a photo to upload");
     }
-  }
+  };
+  onChangeHandler = event => {
+    //for multiple files
+    var files = event.target.files;
+    if (
+      this.maxSelectFile(event) &&
+      this.checkFileSize(event) &&
+      this.checkMimeType(event)
+    ) {
+      this.setState({
+        selectedFile: files,
+        loaded: 0
+      });
+
+      //for single file
+      // this.setState({
+      //   selectedFile: event.target.files[0],
+      //   loaded: 0
+      // });
+    }
+  };
+  onClickHandler1 = () => {
+    if (this.state.selectedFile) {
+      const data = new FormData();
+      // var headers = {
+      //   "Content-Type": "multipart/form-data",
+      //   "x-access-token": localStorage.getItem("token")
+      // };
+
+      //for single files
+      //data.append("file", this.state.selectedFile);
+      //for multiple files
+      for (var x = 0; x < this.state.selectedFile.length; x++) {
+        data.append("file", this.state.selectedFile[x]);
+      }
+      axios
+        .post("/api/Uploads/Registration", data, {
+          // receive two parameter endpoint url ,form data
+          onUploadProgress: ProgressEvent => {
+            this.setState({
+              loaded1: (ProgressEvent.loaded/ ProgressEvent.total) * 100
+            });
+          }
+        })
+        .then(res => {
+          this.setState({
+            FullPhoto: res.data
+          });
+          localStorage.setItem("FullPhoto", res.data);
+          toast.success("upload success");
+          const data = {
+            FullPhoto: res.data
+          };
+          this.postData(data);
+        })
+        .catch(err => {
+          toast.error("upload fail");
+        });
+    } else {
+      toast.warn("Please select a photo to upload");
+    }
+  };
+  onChangeHandler1 = event => {
+    //for multiple files
+    var files = event.target.files;
+    if (
+      this.maxSelectFile(event) &&
+      this.checkFileSize(event) &&
+      this.checkMimeType(event)
+    ) {
+      this.setState({
+        selectedFile: files,
+        loaded: 0
+      });
+
+      //for single file
+      // this.setState({
+      //   selectedFile: event.target.files[0],
+      //   loaded: 0
+      // });
+    }
+  };
+  
   saveDocuments(FileName) {
     if (this.state.ApplicationID) {
       //save
@@ -1190,7 +712,7 @@ class Registration extends Component {
             } else {
               toast.error("Could not be saved please try again!");
               // swal("Saved!", "Could not be saved please try again", "error");
-            }
+            } 
           })
         )
         .catch(err => {
@@ -1203,75 +725,6 @@ class Registration extends Component {
       // alert("Please ensure You have filled tender details before filling grounds and requests.")
     }
   }
-  handleGroundsSubmit = event => {
-    event.preventDefault();
-    this.saveGroundsDescriptions("Grounds for Appeal");
-  };
-  handleRequestSubmit = event => {
-    event.preventDefault();
-    this.saveRequests("Requested Orders");
-  };
-  handleInterestedPartySubmit = event => {
-    event.preventDefault();
-    if (this.state.ApplicationID) {
-      let datatosave = {
-        Name: this.state.InterestedPartyName,
-        ApplicationID: this.state.ApplicationID,
-        ContactName: this.state.InterestedPartyContactName,
-        Email: this.state.InterestedPartyEmail,
-        TelePhone: this.state.InterestedPartyTelePhone,
-        Mobile: this.state.InterestedPartyMobile,
-        PhysicalAddress: this.state.InterestedPartyPhysicalAddress,
-        PostalCode: this.state.InterestedPartyPostalCode,
-        Town: this.state.InterestedPartyTown,
-        POBox: this.state.InterestedPartyPOBox,
-        Designation: this.state.InterestedPartyDesignation
-      };
-      fetch("/api/interestedparties", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(datatosave)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-              // this.setState({ Grounds: datatosave });
-              var rows = this.state.interestedparties;
-              rows.push(datatosave);
-              this.setState({ interestedparties: rows });
-              toast.success("Added successfully");
-              let setstatedata = {
-                InterestedPartyContactName: "",
-                InterestedPartyName: "",
-                InterestedPartyEmail: "",
-                InterestedPartyTelePhone: "",
-                InterestedPartyMobile: "",
-                InterestedPartyPhysicalAddress: "",
-                InterestedPartyPOBox: "",
-                InterestedPartyPostalCode: "",
-                InterestedPartyTown: "",
-                InterestedPartyDesignation: "",
-                AddInterestedParty: false
-              };
-              this.setState(setstatedata);
-            } else {
-              toast.error(data.message);
-              //swal("", "Could not be added please try again", "error");
-            }
-          })
-        )
-        .catch(err => {
-          toast.error("Could not be added please try again");
-        });
-    } else {
-      toast.error(
-        "Please ensure You have filled tender details before adding interested parties."
-      );
-    }
-  };
 //kelvin was here
 handleEducationalSubmit = event => {
   event.preventDefault();
@@ -1608,230 +1061,70 @@ handleSiblingsSubmit = event => {
   };
   Resetsate() {
     const data = {
-      IDNumber:""  ,
-      Fullname:"" ,
-      Gender:""  ,
-      Phone:""  ,
-      DOB:""  ,
-      Email:""  ,
-      Country:""  ,
-      Passport:""  ,
-      Religion:""  ,
-      Marital:""  ,
-      Height:""  ,
-      Weight:"" ,
-      Languages:"" ,
-      Skills:"",
-      AddEducational:false,
-      AddGuardians:false,
-      AddNextOFKin:false,
-      AddSiblings:false,
-      EducationalInstitution:"",
-      EducationalPeriod:"" ,
-      EducationalDecription:"",
-      GuardianName:"",
-      GuardianIDNO:"",
-      GuardianRelationship:"",
-      NextOFKinName:"" ,
-      NextOfRelationship:"",
-      NextOfCurrentResident:"",
-      NextOfContact:"" ,
-      SiblingName:"",
-      SiblingsSex:"" ,
-       SiblingsAge:"",
+      IDNumber:"",
+      Fullname:"",
+      Gender:"",
+      phone:"",
+      DOB:"",
+      Email:"",
+      Country:"",
+      County:"",
+      Village:"",
+      Religion:"",
+      Marital:"",
+      Height:"",
+      Weight:"",
+      photo:"",
+      FullPhoto:"",
+      BirthCer:"",
+      Husband:"",
+      HusbandMobile:"",
+      HusbandID:"",
+      Languages:"",
+       Skills:"",
+      Classify:"",
+      Agent:"",
+      Job:"",
+      selectedFile: null,
+       Decription:"",
+       Period:"",
+       UserGroup:"",
+       Institution:"",
+       AddEducational:false,
+       AddGuardians:false,
+       AddNextOFKin:false,
+       AddSiblings:false,
+       EducationalInstitution:"",
+       EducationalPeriod:"" ,
+       EducationalDecription:"",
+       GuardianName:"",
+       GuardianIDNO:"",
+       GuardianRelationship:"",
+       NextOFKinName:"" ,
+       NextOfRelationship:"",
+       NextOfCurrentResident:"",
+       NextOfContact:"" ,
+       SiblingName:"",
+       SiblingsSex:"" ,
+        SiblingsAge:"",
+        Institution:"",
+        Decription: "",
+        Name: "",
+        ParentID:"",
+        Relationship:"",
+        KRelationship:"",
+        Period: "",
+        SiblingName: "",
+        Age: "",
+        Sex: "",
+        KinName:"",
+        CurrentResident:"",
+        Contact:"",
       IsUpdate: false,
       DocumentsAvailable: false
     };
     this.setState(data);
   }
-  maxSelectFile = event => {
-    let files = event.target.files; // create file object
-    if (files.length > 1) {
-      const msg = "Only One file can be uploaded at a time";
-      event.target.value = null; // discard selected file
-      toast.warn(msg);
-      return false;
-    }
-    return true;
-  };
-  checkMimeType = event => {
-    let files = event.target.files;
-    let err = []; // create empty array
-    const types = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    ];
-    for (var x = 0; x < files.length; x++) {
-      if (types.every(type => files[x].type !== type)) {
-        err[x] = files[x].type + " is not a supported format\n";
-        // assign message to array
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      // loop create toast massage
-      event.target.value = null;
-
-      toast.error(err[z]);
-    }
-    return true;
-  };
-  checkFileSize = event => {
-    let files = event.target.files;
-    let size = 200000000;
-    let err = [];
-    for (var x = 0; x < files.length; x++) {
-      if (files[x].size > size) {
-        err[x] = files[x].type + "is too large, please pick a smaller file\n";
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      toast.error(err[z]);
-      event.target.value = null;
-    }
-    return true;
-  };
-  onClickHandler = event => {
-    event.preventDefault();
-    if (this.state.selectedFile) {
-      const data = new FormData();
-
-      for (var x = 0; x < this.state.selectedFile.length; x++) {
-        data.append("file", this.state.selectedFile[x]);
-      }
-      axios
-        .post("/api/upload/Document", data, {
-          // receive two parameter endpoint url ,form data
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-            });
-          }
-        })
-        .then(res => {
-          this.saveDocuments(res.data);
-          // this.setState({
-          //     Logo: res.data
-          // });
-          // localStorage.setItem("UserPhoto", res.data);
-        })
-        .catch(err => {
-          toast.error("upload fail");
-        });
-    } else {
-      toast.warn("Please select a file to upload");
-    }
-  };
-  fetchBankSlips = Applicationno => {
-    
-    this.setState({ BankSlips: [] });
-    fetch("/api/applicationfees/" + Applicationno + "/Bankslips", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(BankSlips => {
-        if (BankSlips.length > 0) {
-          const UserRoles = [_.groupBy(BankSlips, "Category")];
-          if (UserRoles[0].ApplicationFees) {
-            this.setState({ BankSlips: UserRoles[0].ApplicationFees });
-          }
-        }
-      })
-      .catch(err => {
-        toast.error(err.message);
-      });
-  };
-  fetchPaymentDetails = ApplicationID => {
-    this.setState({ PaymentDetails: [] });
-    fetch("/api/applicationfees/" + ApplicationID + "/PaymentDetails", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(PaymentDetails => {
-        if (PaymentDetails.length > 0) {
-          this.setState({ PaymentDetails: PaymentDetails });
-        }
-      })
-      .catch(err => {
-        toast.error(err.message);
-        //swal("", err.message, "error");
-      });
-  };
-  SaveBankSlip(Filename) {
-    let data = {
-      ApplicationID: this.state.ApplicationID,
-      filename: Filename,
-      Category: "ApplicationFees"
-    };
-    fetch("/api/applicationfees/BankSlip", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response =>
-        response.json().then(data => {
-          if (data.success) {
-            toast.success("upload complete");
-            this.fetchBankSlips(this.state.ApplicationID);
-          } else {
-            toast.error("Error occured while saving uploaded document");
-          }
-        })
-      )
-      .catch(err => {
-        toast.error("Error occured while saving uploaded document");
-      });
-  }
-  UploadBankSlip = event => {
-    event.preventDefault();
-    if (this.state.selectedFile) {
-      const data = new FormData();
-
-      for (var x = 0; x < this.state.selectedFile.length; x++) {
-        data.append("file", this.state.selectedFile[x]);
-      }
-      axios
-        .post("/api/upload/BankSlips", data, {
-          // receive two parameter endpoint url ,form data
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-            });
-          }
-        })
-        .then(res => {
-          this.SaveBankSlip(res.data);
-        })
-        .catch(err => {
-          toast.error("upload fail");
-        });
-    } else {
-      toast.warn("Please select a file to upload");
-    }
-  };
-
-  onChangeHandler = event => {
-    //for multiple files
-    var files = event.target.files;
-    if (this.maxSelectFile(event)) {
-      this.setState({
-        selectedFile: files,
-        loaded: 0
-      });
-    }
-  };
   fetchNextOFKin = IDNumber => {
     this.setState({ Parent: [] });
     fetch("/api/NextOFKin/" + IDNumber, {
@@ -1938,46 +1231,7 @@ handleSiblingsSubmit = event => {
         toast.error(err.message);
       });
   };
-  fetchPE = () => {
-    fetch("/api/PE", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(PE => {
-        if (PE.length > 0) {
-          this.setState({ PE: PE });
-        } else {
-          swal("", PE.message, "error");
-        }
-      })
-      .catch(err => {
-        swal("", err.message, "error");
-      });
-  };
-  fetchTenderTypes = () => {
-    fetch("/api/tendertypes", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token")
-      }
-    })
-      .then(res => res.json())
-      .then(TenderTypes => {
-        if (TenderTypes.length > 0) {
-          this.setState({ TenderTypes: TenderTypes });
-        } else {
-          toast.err(TenderTypes.message);
-        }
-      })
-      .catch(err => {
-      //  toast.err(err.message);
-      });
-  };
+  
   componentDidMount() {
     let token = localStorage.getItem("token");
     if (token == null) {
@@ -1994,16 +1248,15 @@ handleSiblingsSubmit = event => {
         .then(response =>
           response.json().then(data => {
             if (data.success) {
-              this.fetchPE();
-              this.fetchTenderTypes();
+            
               this.fetchApplicantDetails();
               this.fetchEducational();
               this.fetchParent();
               this.fetchNextOFKin();
               this.fetchRegistration();
               this.fetchSiblings();
-              this.fetchBanks();
-              this.fetchPaymentTypes()
+              this.fetchcounties();
+              this.fetchcountries();
             } else {
               localStorage.clear();
               return (window.location = "/#/Logout");
@@ -2037,18 +1290,24 @@ handleSiblingsSubmit = event => {
     const data = {
       IDNumber:k.IDNumber,
       Fullname: k.Fullname,
-      Phone: k.Phone,
+      phone: k.phone,
       Email: k.Email,
       Gender: k.Gender,
-      DOB: k.DOB,
+      DOB: new Date(k.DOB).toLocaleDateString(),
       Country: k.Country,
-      Passport: k.Passport,
+      County: k.County,
       Religion: k.Religion,
       Marital: k.Marital,
       Height: k.Height,
       Weight: k.Weight,
-      Languages: k.Languages,
+      BirthCer: k.BirthCer,
       Skills: k.Skills,
+      Languages:k.Languages,
+      Classify:k.Classify,
+      photo:k.photo,
+      FullPhoto:k.FullPhoto,
+      Agent:k.Agent,
+      Job:k.Job,
       Institution: k.Institution,
       Decription: k.Decription,
       Name: k.Name,
@@ -2128,8 +1387,6 @@ handleSiblingsSubmit = event => {
         "APPLICATION APPROVAL"
       );
     }
-   
-
   }
   ReSubmitApplication = () => {
     fetch("/api/applications/" + this.state.ApplicationID+"/Resubmit", {
@@ -2251,7 +1508,7 @@ handleSiblingsSubmit = event => {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchPE();
+          this.fetchRegistration();
 
           if (data.success) {
             swal("", "Record has been saved!", "success");
@@ -2265,24 +1522,108 @@ handleSiblingsSubmit = event => {
       });
   }
   render() {
-    const PE = [...this.state.PE].map((k, i) => {
+    let CountyOption = [...this.state.counties].map((k, i) => {
       return {
-        value: k.PEID,
+        value: k.Name,
         label: k.Name
       };
     });
-    let TenderTypes = [...this.state.TenderTypes].map((k, i) => {
+    let CountryOption = [...this.state.Countries].map((k, i) => {
       return {
-        value: k.Code,
-        label: k.Description
+        value: k.Name,
+        label: k.Name
       };
     });
-    let paymenttypes = [...this.state.paymenttypes].map((k, i) => {
-      return {
-        value: k.ID,
-        label: k.Description
-      };
-    });
+    let ReligionStatus = [
+      {
+        value: "Christianity",
+        label: "Christianity"
+      },
+      {
+        value: "Islam",
+        label: "Islam"
+      },
+      {
+        value: "Hinduism",
+        label: "Hinduism"
+      },
+      {
+        value: "Buddhism",
+        label: "Buddhism"
+      },
+      {
+        value: "Traditional",
+        label: "Traditional"
+      }
+     
+    ];
+    let Relationship = [
+      {
+        value: "Father",
+        label: "Father"
+      },
+      {
+        value: "Mother",
+        label: "Mother"
+      },
+      {
+        value: "Wife",
+        label: "Wife"
+      },
+      {
+        value: "Husband",
+        label: "Husband"
+      },
+      {
+        value: "brother",
+        label: "brother"
+      },
+      {
+        value: "Sister",
+        label: "Sister"
+      },
+      {
+        value: "Aunt",
+        label: "Aunt"
+      },{
+        value: "Uncle",
+        label: "Uncle"
+      },
+      {
+        value: "Niece",
+        label: "Niece"
+      },{
+        value: "Nephew",
+        label: "Nephew"
+      },
+      {
+        value: "Step Sister",
+        label: "Step Sister"
+      }
+    ];
+    let ClassifyOption = [
+      {
+        value: "Walkin",
+        label: "Walkin"
+      },
+      {
+        value: "Refferal",
+        label: "Refferal"
+      },
+      {
+        value: "Twitter",
+        label: "Twitter"
+      },
+      {
+        value: "Facebook",
+        label: "Facebook"
+      },
+      {
+        value: "Agent",
+        label: "Agent"
+      }
+    ];
+
     let GenderCategories = [
       {
         value: "Male",
@@ -2291,6 +1632,20 @@ handleSiblingsSubmit = event => {
       {
         value: "Female",
         label: "Female"
+      }
+    ];
+    let Marital = [
+      {
+        value: "Single",
+        label: "Single"
+      },
+      {
+        value: "Married",
+        label: "Married"
+      },
+      {
+        value: "Divorce",
+        label: "Divorce"
       }
     ];
     const ColumnData = [
@@ -2303,8 +1658,8 @@ handleSiblingsSubmit = event => {
       { label: "IDNumber", field: "IDNumber" },
 
       {
-        label: "Phone",
-        field: "Phone",
+        label: "phone",
+        field: "phone",
         sort: "asc"
       },
       {
@@ -2326,50 +1681,6 @@ handleSiblingsSubmit = event => {
     ];
     let Rowdata1 = [];
     const rows = [...this.state.Registration];
-    // if (rows.length > 0) {
-    //   rows.map((k, i) => {
-    //     let Rowdata = {
-    
-    //       FullName: (
-    //         <a onClick={e => this.handViewApplication(k, e)}>{k.Fullname}</a>
-    //       ),
-    //       // PE: <a onClick={e => this.handViewApplication(k, e)}>{k.PEName}</a>,
-    //       // FilingDate: (
-    //       //   <a onClick={e => this.handViewApplication(k, e)}>
-    //       //     {dateFormat(
-    //       //       new Date(k.FilingDate).toLocaleDateString(),
-    //       //       "mediumDate"
-    //       //     )}
-    //       //   </a>
-    //       // ),
-    //       // ApplicationREf: (
-    //       //   <a onClick={e => this.handViewApplication(k, e)}>
-    //       //     {k.ApplicationREf}
-    //       //   </a>
-    //       // ),
-    //       // Status: (
-    //       //   <a
-    //       //     className="font-weight-bold"
-    //       //     onClick={e => this.handViewApplication(k, e)}
-    //       //   >
-    //       //     {k.Status}
-    //       //   </a>
-    //       // ),
-          // Action: (
-          //   <span>
-          //     <a
-          //       style={{ color: "#007bff" }}
-          //       onClick={e => this.handViewApplication(k, e)}
-          //     >
-          //       {" "}
-          //       View{" "}
-          //     </a>
-          //   </span>
-          // )
-    //     };
-    //     Rowdata1.push(Rowdata);
-    //   });
-    // }
     if (rows.length > 0) {
       rows.forEach(k => {
         const Rowdata = {
@@ -2388,9 +1699,9 @@ handleSiblingsSubmit = event => {
                 {k.Gender}
               </a>
             ),
-            Phone: (
+            phone: (
               <a onClick={e => this.handViewRegistration(k, e)}>
-                {k.Phone}
+                {k.phone}
               </a>
             ),
             Email: (
@@ -2430,6 +1741,22 @@ handleSiblingsSubmit = event => {
       margin: "0 auto",
       backgroundColor: "white"
     };
+      let photostyle = {
+        height: 150,
+        width: 150
+      };
+      let Fullstyle = {
+        height: 150,
+        width: 150
+      };
+      let photo = this.state.photo;
+      if (!this.state.photo) {
+        photo = "default.png";
+      }
+      let FullPhoto = this.state.FullPhoto;
+      if (!this.state.FullPhoto) {
+        photo = "default.png";
+      }
 
     let childdiv = {
       margin: "30px"
@@ -2495,7 +1822,7 @@ handleSiblingsSubmit = event => {
                       <tr>
                         <td className="font-weight-bold"> Mobile:</td>
 
-                        <td> {this.state.Phone}</td>
+                        <td> {this.state.phone}</td>
                       </tr>
                       <tr>
                         <td className="font-weight-bold"> Gender:</td>
@@ -2511,14 +1838,6 @@ handleSiblingsSubmit = event => {
                         <td className="font-weight-bold"> Nationality:</td>
                         <td> {this.state.Country}</td>
                       </tr>
-                    </table>
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                <h3 style={headingstyle}> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</h3>
-                
-                  <div className="col-lg-10 border border-success rounded">
-                    <table className="table table-borderless table-sm">
                       <tr>
                         <td className="font-weight-bold"> Religion:</td>
                         <td> {this.state.Religion}</td>
@@ -2528,6 +1847,18 @@ handleSiblingsSubmit = event => {
                         <td> {this.state.Marital}</td>
                       </tr>
                       <tr>
+                        <td className="font-weight-bold"> Languages:</td>
+                        <td> {this.state.Languages}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Skills:</td>
+                        <td> {this.state.Skills}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Classification:</td>
+                        <td> {this.state.Classify}</td>
+                      </tr>
+                      <tr>
                         <td className="font-weight-bold"> Height:</td>
                         <td> {this.state.Height}</td>
                       </tr>
@@ -2535,13 +1866,31 @@ handleSiblingsSubmit = event => {
                         <td className="font-weight-bold"> Weight:</td>
                         <td> {this.state.Weight}</td>
                       </tr>
+                    </table>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                <h3 style={headingstyle}> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</h3>
+                
+                  <div className="col-lg-10 border border-success rounded">
+                    <table className="table table-borderless table-sm">
                       <tr>
-                        <td className="font-weight-bold"> Languages:</td>
-                        <td> {this.state.Languages}</td>
-                      </tr>
-                      <tr>
-                        <td className="font-weight-bold"> Skills:</td>
-                        <td> {this.state.Skills}</td>
+                        <td className="font-weight-bold"> Passport:</td>
+                        <td>  <img
+                alt="image"
+                className=""
+                src={process.env.REACT_APP_BASE_URL + "/Passport/" + photo}
+                style={photostyle}
+              /></td>
+              </tr>
+               <tr>
+                        <td className="font-weight-bold"> FullPhoto:</td>
+                 <td>  <img
+                alt="image"
+                className=""
+                src={process.env.REACT_APP_BASE_URL + "/Registration/" + FullPhoto}
+                style={photostyle}
+              /></td>
                       </tr>
                     </table>
                   </div>
@@ -2818,7 +2167,7 @@ handleSiblingsSubmit = event => {
                           </div>
                           <div class="col-sm-4">
                             <input
-                              type="text"
+                              type="number"
                               class="form-control"
                               name="IDNumber"
                               onChange={this.handleInputChange}
@@ -2852,11 +2201,11 @@ handleSiblingsSubmit = event => {
                           </div>
                           <div class="col-sm-4">
                             <input
-                              type="text"
+                              type="number"
                               class="form-control"
-                              name="Phone"
+                              name="phone"
                               onChange={this.handleInputChange}
-                              value={this.state.Phone}
+                              value={this.state.phone}
                               required
                             />
                           </div>
@@ -2870,7 +2219,7 @@ handleSiblingsSubmit = event => {
                           </div>
                           <div class="col-sm-4">
                             <input
-                              type="text"
+                              type="email"
                               class="form-control"
                               name="Email"
                               onChange={this.handleInputChange}
@@ -2894,55 +2243,58 @@ handleSiblingsSubmit = event => {
                             />
                           </div>
                         </div>
-    <br/>
+                           <br/>
                         <div className=" row">
-                      <div class="col-sm-2">
+                        <div class="col-sm-2">
                             <label for="Country" className="font-weight-bold">
-                            Nationality
+                              Country
                             </label>
                           </div>
                           <div class="col-sm-4">
-                            <input
-                              type="text"
-                              class="form-control"
-                              name="Country"
-                              onChange={this.handleInputChange}
-                              value={this.state.Country}
-                              required
-                            />
+                          <Select
+                                  name="Country"
+                                  value={CountryOption.filter(
+                                    option => option.label === this.state.Country
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={CountryOption}
+                                  required
+                                />
                           </div>
                           <div class="col-sm-2">
-                            <label for="Passport" className="font-weight-bold">
-                              Passport
+                            <label for="County" className="font-weight-bold">
+                              County
                             </label>
                           </div>
                           <div class="col-sm-4">
-                            <input
-                              type="text"
-                              class="form-control"
-                              name="Passport"
-                              onChange={this.handleInputChange}
-                              value={this.state.Passport}
-                              required
-                            />
+                          <Select
+                                  name="County"
+                                  value={CountyOption.filter(
+                                    option => option.label === this.state.County
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={CountyOption}
+                                  required
+                                />
                           </div>
                         </div>
                         <br/>
                         <div className=" row">
-                      <div class="col-sm-2">
+                        <div class="col-sm-2">
                             <label for="Religion" className="font-weight-bold">
-                            Religion
+                              Religion
                             </label>
                           </div>
                           <div class="col-sm-4">
-                            <input
-                              type="text"
-                              class="form-control"
-                              name="Religion"
-                              onChange={this.handleInputChange}
-                              value={this.state.Religion}
-                              required
-                            />
+                          <Select
+                                  name="Religion"
+                                  value={ReligionStatus.filter(
+                                    option => option.label === this.state.Religion
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={ReligionStatus}
+                                  required
+                                />
                           </div>
                           <div class="col-sm-2">
                             <label for="Marital" className="font-weight-bold">
@@ -2950,14 +2302,15 @@ handleSiblingsSubmit = event => {
                             </label>
                           </div>
                           <div class="col-sm-4">
-                            <input
-                              type="text"
-                              class="form-control"
-                              name="Marital"
-                              onChange={this.handleInputChange}
-                              value={this.state.Marital}
-                              required
-                            />
+                          <Select
+                                  name="Marital"
+                                  value={Marital.filter(
+                                    option => option.label === this.state.Marital
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={Marital}
+                                  required
+                                />
                           </div>
                         </div>
   
@@ -2976,6 +2329,7 @@ handleSiblingsSubmit = event => {
                               onChange={this.handleInputChange}
                               value={this.state.Height}
                               required
+                              placeholder="Enter height in cm"
                             />
                           </div>
                           <div class="col-sm-2">
@@ -2985,18 +2339,53 @@ handleSiblingsSubmit = event => {
                           </div>
                           <div class="col-sm-4">
                             <input
-                              type="text"
+                              type="number"
                               class="form-control"
                               name="Weight"
                               onChange={this.handleInputChange}
                               value={this.state.Weight}
+                              placeholder="Enter weignt in kgs"
                               required
                             />
                           </div>
                         </div>
                         <br/>
                         <div className=" row">
-                      <div class="col-sm-2">
+                        <div class="col-sm-2">
+                            <label for="Village" className="font-weight-bold">
+                            Village
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Village"
+                              onChange={this.handleInputChange}
+                              value={this.state.Village}
+                              required
+                    
+                            />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="BirthCer" className="font-weight-bold">
+                              Birth Certificate
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="BirthCer"
+                              onChange={this.handleInputChange}
+                              value={this.state.BirthCer}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <br/>
+                        <div className=" row">
+                        <div class="col-sm-2">
                             <label for="Languages" className="font-weight-bold">
                             Languages
                             </label>
@@ -3009,11 +2398,12 @@ handleSiblingsSubmit = event => {
                               onChange={this.handleInputChange}
                               value={this.state.Languages}
                               required
+                    
                             />
                           </div>
                           <div class="col-sm-2">
-                            <label for="Skills" className="font-Skills-bold">
-                            Skills
+                            <label for="Skills" className="font-weight-bold">
+                              Skills
                             </label>
                           </div>
                           <div class="col-sm-4">
@@ -3027,9 +2417,137 @@ handleSiblingsSubmit = event => {
                             />
                           </div>
                         </div>
-  
+                      <br />
+                      <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Classify" className="font-weight-bold">
+                              Classify
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="Classify"
+                                  value={ClassifyOption.filter(
+                                    option => option.label === this.state.Classify
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={ClassifyOption}
+                                  required
+                                />
+                          </div>
+                          
+                        <div class="col-sm-2">
+                            <label for="Agent" className="font-weight-bold">
+                            Agent
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Agent"
+                              onChange={this.handleInputChange}
+                              value={this.state.Agent}
+                              required
+                    
+                            />
+                          </div>
+                         </div>
+                         <br/>
+                         
+                         <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Job" className="font-weight-bold">
+                            Job
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Job"
+                              onChange={this.handleInputChange}
+                              value={this.state.Job}
+                              required
+                    
+                            />
+                          </div>
+                         </div>
                         <br />
-
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Village" className="font-weight-bold">
+                            Passport Photo
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <input
+                          type="file"
+                          className="form-control"
+                          name="file"
+                          onChange={this.onChangeHandler}
+                          multiple
+                        />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="BirthCer" className="font-weight-bold">
+                              FullPhoto
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <input
+                          type="file"
+                          className="form-control"
+                          name="file"
+                          onChange={this.onChangeHandler1}
+                          multiple
+                        />
+                       </div>
+                        </div>
+                          <br/>
+                          <div className=" row">
+                          <div class="col-sm-3">
+                          <div class="form-group">
+                        <Progress
+                          max="100"
+                          color="success"
+                          value={this.state.loaded}
+                        >
+                          {Math.round(this.state.loaded, 2)}%
+                        </Progress>
+                      </div>
+                      </div>
+                      <div class="col-sm-3">
+                      <button
+                      type="button"
+                      class="btn btn-success"
+                      onClick={this.onClickHandler}
+                    >
+                      Upload
+                    </button>
+                      </div>
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                        <Progress
+                          max="100"
+                          color="success"
+                          value={this.state.loaded1}
+                        >
+                          {Math.round(this.state.loaded1, 2)}%
+                        </Progress>
+                      </div>
+                      </div>
+                      <div class="col-sm-3">
+                      <button
+                      type="button"
+                      class="btn btn-success"
+                      onClick={this.onClickHandler1}
+                    >
+                      Upload
+                    </button>
+                      </div>
+                          </div>
                         <p></p>
                         <div className=" row">
                           <div className="col-sm-9" />
@@ -3086,7 +2604,7 @@ handleSiblingsSubmit = event => {
                   >
                     <Modal
                       visible={this.state.AddEducational}
-                      width="800"
+                      width="900"
                       height="300"
                       effect="fadeInUp"
                     >
@@ -3293,7 +2811,7 @@ handleSiblingsSubmit = event => {
                   >
                       <Modal
                       visible={this.state.AddGuardians}
-                      width="800"
+                      width="900"
                       height="300"
                       effect="fadeInUp"
                     >
@@ -3339,15 +2857,15 @@ handleSiblingsSubmit = event => {
                                   </div>
                                   <div className="col-md-6">
                                     <div className="row">
-                                      <div className="col-md-4">
+                                      <div className="col-md-5">
                                         <label
                                           htmlFor="exampleInputPassword1"
                                           className="font-weight-bold"
                                         >
-                                          GuardianID NO
+                                          Guardian ID Number
                                         </label>
                                       </div>
-                                      <div className="col-md-8">
+                                      <div className="col-md-7">
                                         <input
                                           onChange={this.handleInputChange}
                                           value={
@@ -3376,18 +2894,17 @@ handleSiblingsSubmit = event => {
                                         </label>
                                       </div>
                                       <div className="col-md-8">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          value={
-                                            this.state
-                                              .GuardianRelationship
-                                          }
-                                          type="text"
-                                          required
-                                          name="GuardianRelationship"
-                                          className="form-control"
-                                        />
+                                      <Select
+                                  name="GuardianRelationship"
+                                  value={Relationship.filter(
+                                    option => option.label === this.state.GuardianRelationship
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={Relationship}
+                                  required
+                                />
                                       </div>
+                                      
                                     </div>
                                     
                                   </div>
@@ -3560,7 +3077,7 @@ handleSiblingsSubmit = event => {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="col-md-6">
+                               <div className="col-md-6">
                                     <div className="row">
                                       <div className="col-md-4">
                                         <label
@@ -3571,19 +3088,19 @@ handleSiblingsSubmit = event => {
                                         </label>
                                       </div>
                                       <div className="col-md-8">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          value={
-                                            this.state
-                                              .NextOfRelationship
-                                          }
-                                          type="text"
-                                          required
-                                          name="NextOfRelationship"
-                                          className="form-control"
-                                        />
+                                      <Select
+                                  name="NextOfRelationship"
+                                  value={Relationship.filter(
+                                    option => option.label === this.state.NextOfRelationship
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={Relationship}
+                                  required
+                                />
                                       </div>
+                                      
                                     </div>
+                                    
                                   </div>
                                 </div>
                                 <br />
@@ -3968,27 +3485,38 @@ handleSiblingsSubmit = event => {
                               required
                             />
                           </div>
-                          <div className="col-sm-2">
-                            <div className="form-group">
-                              <br />
-                              <br />
-                              <input
-                                className="checkbox"
-                                id="Confidential"
-                                type="checkbox"
-                                name="Confidential"
-                                defaultChecked={this.state.Confidential}
-                                onChange={this.handleInputChange}
-                              />{" "}
-                              <label
-                                htmlFor="Confidential"
-                                className="font-weight-bold"
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <label for="Document" className="font-weight-bold">
+                              Passport photo
+                            </label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              name="file"
+                              onChange={this.onChangeHandler}
+                              multiple
+                            />
+                            <div class="form-group">
+                              <Progress
+                                max="100"
+                                color="success"
+                                value={this.state.loaded}
                               >
-                                Confidential
-                              </label>
+                                {Math.round(this.state.loaded, 2)}%
+                              </Progress>
                             </div>
+                            <button
+                              type="submit"
+                              class="btn btn-success "
+                              // onClick={this.onClickHandler}
+                            >
+                              Upload
+                            </button>{" "}
                           </div>
                         </div>
+                        <br />
                         <div class="row">
                           <div class="col-sm-6">
                             <label for="Document" className="font-weight-bold">
@@ -4019,7 +3547,7 @@ handleSiblingsSubmit = event => {
                             </button>{" "}
                           </div>
                         </div>
-                        <br />
+                        <br/>
                         <div class="row">
                           <div class="col-sm-8">
                             {this.state.DocumentsAvailable ? (

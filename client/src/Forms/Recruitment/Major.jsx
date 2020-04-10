@@ -11,11 +11,11 @@ import ReactExport from "react-data-export";
 var dateFormat = require("dateformat");
 var jsPDF = require("jspdf");
 require("jspdf-autotable");
-class Minor extends Component {
+class Major extends Component {
   constructor() {
     super();
     this.state = {
-      Minor: [],
+      Major: [],
       Facility: [],
       Registration:[],
       privilages: [],
@@ -24,11 +24,14 @@ class Minor extends Component {
       IDNumber: "",
       FullName:"",
       Number:"",
-      Phone:"",
+      Number:"",
+      MedicalFacility:"",
+      MedicalResults:"",
       DOM:"",
-      Cost:"500",
-      Resuit:"",
-      ID: "",
+      MCertificate: "",
+      DOC: "",
+      Cost: "4000",
+      ID:"",
       MedID:"",
       isUpdate: false,
       selectedFile: null
@@ -114,124 +117,24 @@ class Minor extends Component {
   };
   Resetsate() {
     const data = {
-      MedicalFacilty:"",
-      IDNumber: "",
-      FullName:"",
-      Number:"",
-      Phone:"",
-      DOM:"",
-      Cost:"500",
-      Resuit:"",
-      ID: "",
+        IDNumber: "",
+        FullName:"",
+        Number:"",
+        MedicalFacility:"",
+        MedicalResults:"",
+        DOM:"",
+        MCertificate: "",
+        DOC: "",
+        Cost: "4000",
+        ID:"",
+        MedID:"",
       isUpdate: false,
-      PIN: "",
-      Companyregistrationdate: "",
-      RegistrationNo: ""
     
     };
     this.setState(data);
   }
-  maxSelectFile = event => {
-    let files = event.target.files; // create file object
-    if (files.length > 1) {
-      const msg = "Only One image can be uploaded at a time";
-      event.target.value = null; // discard selected file
-      toast.warn(msg);
-      return false;
-    }
-    return true;
-  };
-  checkMimeType = event => {
-    let files = event.target.files;
-    let err = []; // create empty array
-    const types = ["image/png", "image/jpeg", "image/gif"];
-    for (var x = 0; x < files.length; x++) {
-      if (types.every(type => files[x].type !== type)) {
-        err[x] = files[x].type + " is not a supported format\n";
-        // assign message to array
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      // loop create toast massage
-      event.target.value = null;
-      toast.error(err[z]);
-    }
-    return true;
-  };
-  checkFileSize = event => {
-    let files = event.target.files;
-    let size = 2000000;
-    let err = [];
-    for (var x = 0; x < files.length; x++) {
-      if (files[x].size > size) {
-        err[x] = files[x].type + "is too large, please pick a smaller file\n";
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      toast.error(err[z]);
-      event.target.value = null;
-    }
-    return true;
-  };
-  onClickHandler = () => {
-    if (this.state.selectedFile) {
-      const data = new FormData();
-      // var headers = {
-      //   "Content-Type": "multipart/form-data",
-      //   "x-access-token": localStorage.getItem("token")
-      // };
-
-      //for single files
-      //data.append("file", this.state.selectedFile);
-      //for multiple files
-      for (var x = 0; x < this.state.selectedFile.length; x++) {
-        data.append("file", this.state.selectedFile[x]);
-      }
-      axios
-        .post("/api/upload", data, {
-          // receive two parameter endpoint url ,form data
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-            });
-          }
-        })
-        .then(res => {
-          this.setState({
-            Logo: res.data
-          });
-          // localStorage.setItem("UserPhoto", res.data);
-          toast.success("upload success");
-        })
-        .catch(err => {
-          toast.error("upload fail");
-        });
-    } else {
-      toast.warn("Please select a photo to upload");
-    }
-  };
-  onChangeHandler = event => {
-    //for multiple files
-    var files = event.target.files;
-    if (
-      this.maxSelectFile(event) &&
-      this.checkFileSize(event) &&
-      this.checkMimeType(event)
-    ) {
-      this.setState({
-        selectedFile: files,
-        loaded: 0
-      });
-
-      //for single file
-      // this.setState({
-      //   selectedFile: event.target.files[0],
-      //   loaded: 0
-      // });
-    }
-  };
-  fetchMinor = () => {
-    fetch("/api/Minor", {
+  fetchMajor = () => {
+    fetch("/api/Major", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -239,11 +142,11 @@ class Minor extends Component {
       }
     })
       .then(res => res.json())
-      .then(Minor => {
-        if (Minor.length > 0) {
-          this.setState({ Minor: Minor });
+      .then(Major => {
+        if (Major.length > 0) {
+          this.setState({ Major: Major });
         } else {
-          swal("", Minor.message, "error");
+          swal("", Major.message, "error");
         }
       })
       .catch(err => {
@@ -268,7 +171,7 @@ class Minor extends Component {
         .then(response =>
           response.json().then(data => {
             if (data.success) {
-              this.fetchMinor();
+              this.fetchMajor();
               this.fetchRegistration();
               this.fetchFacility();
               this.ProtectRoute();
@@ -290,30 +193,36 @@ class Minor extends Component {
     const data = {
       Number: this.state.Number,
       MedicalFacility: this.state.MedicalFacility,
-      Result: this.state.Result,
+      MedicalResults: this.state.MedicalResults,
       DOM:this.state.DOM,
+      MCertificate:this.state.MCertificate,
+      DOC:this.state.DOC,
       Cost: this.state.Cost,
-     
     };
 
     if (this.state.isUpdate) {
-      this.UpdateData("/api/Minor/" + this.state.ID, data);
+      this.UpdateData("/api/Major/" + this.state.ID, data);
     } else {
-      this.postData("/api/Minor", data);
+      this.postData("/api/Major", data);
     }
   };
-  handleEdit = Minor => {
+  handleEdit = Major => {
  
     const data = {
-      Number: Minor.Number,
+      Number: Major.Number,
+      MedicalFacility: Major.MedicalFacility,
+      MedicalResults: Major.MedicalResults,
       DOM: dateFormat(
-        new Date(Minor.DOM).toLocaleDateString(),
+        new Date(Major.DOM).toLocaleDateString(),
         "isoDate"
       ),
-      Result: Minor.Result,
-      Cost: Minor.Cost,
-      MedicalFacility: Minor.MedicalFacility,
-      ID:Minor.ID
+      MCertificate: Major.MCertificate,
+      DOC: dateFormat(
+        new Date(Major.DOC).toLocaleDateString(),
+        "isoDate"
+      ),
+      Cost: Major.Cost,
+      ID:Major.ID
     };
 
     this.setState(data);
@@ -333,17 +242,17 @@ class Minor extends Component {
     
     ];
 
-    const rows = [...this.state.Minor];
+    const rows = [...this.state.Major];
 
     var doc = new jsPDF("p", "pt", "a2", "portrait");
 
     doc.autoTable(columns, rows, {
       margin: { top: 60 },
       beforePageContent: function(data) {
-        doc.text("RMS Minor Medical", 40, 50);
+        doc.text("RMS Major Medical", 40, 50);
       }
     });
-    doc.save("RMS Minor medical.pdf");
+    doc.save("RMS Major medical.pdf");
   };
   ProtectRoute() {
     fetch("/api/UserAccess", {
@@ -412,7 +321,7 @@ class Minor extends Component {
       buttons: true,
     }).then(willDelete => {
       if (willDelete) {
-        return fetch("/api/Minor/" + k, {
+        return fetch("/api/Major/" + k, {
           method: "Delete",
           headers: {
             "Content-Type": "application/json",
@@ -427,7 +336,7 @@ class Minor extends Component {
               } else {
                 swal("", data.message, "error");
               }
-              this.fetchMinor();
+              this.fetchMajor();
             })
           )
           .catch(err => {
@@ -447,7 +356,7 @@ class Minor extends Component {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchMinor();
+          this.fetchMajor();
 
           if (data.success) {
             swal("", "Record has been Updated!", "success");
@@ -477,7 +386,7 @@ class Minor extends Component {
     })
       .then(response =>
         response.json().then(data => {
-          this.fetchMinor();
+          this.fetchMajor();
 
           if (data.success) {
             swal("", "Record has been saved!", "success");
@@ -513,16 +422,27 @@ class Minor extends Component {
         label: k.Name
       };
     });
-    let GenderCategories = [
+    let Results = [
+        {
+            value: "Pass",
+            label: "Pass"
+          },
       {
         value: "Fail",
         label: "Fail"
       },
-      {
-        value: "Pass",
-        label: "Pass"
-      }
+    
     ];
+    let Certifcate = [
+        {
+          value: "Issued",
+          label: "Issued"
+        },
+        {
+          value: "Pending",
+          label: "Pending"
+        }
+      ];
     const ColumnData = [
       {
         label: "Fullname",
@@ -535,8 +455,8 @@ class Minor extends Component {
         sort: "asc"
       },
       {
-        label: "Phone",
-        field: "Phone",
+        label: "DOM",
+        field: "DOM",
         sort: "asc"
       },
       {
@@ -545,8 +465,13 @@ class Minor extends Component {
         sort: "asc"
       },
       {
-        label: "Date Of Medical",
-        field: "DOM",
+        label: "MCertificate",
+        field: "MCertificate",
+        sort: "asc"
+      },
+      {
+        label: "DOC",
+        field: "DOC",
         sort: "asc"
       },
       {
@@ -562,17 +487,17 @@ class Minor extends Component {
       }
     ];
     let Rowdata1 = [];
-    const rows = [...this.state.Minor];
+    const rows = [...this.state.Major];
     if (rows.length > 0) {
       rows.map((k, i) => {
         let Rowdata = {
           IDNumber: k.IDNumber,
           Fullname: k.Fullname,
           DOM: new Date(k.DOM).toLocaleDateString(),
-          Phone: k.Phone,
           MedicalFacility: k.MedicalFacility,
+          MCertificate:k.MCertificate,
+          DOC:new Date(k.DOM).toLocaleDateString(),
           Cost: k.Cost,
-          ID:k.ID,
           action: (
             <span>
               <a
@@ -622,13 +547,13 @@ class Minor extends Component {
               <div className="col-lg-9">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <h2>Minor Medical</h2>
+                    <h2>Major Medical</h2>
                   </li>
                 </ol>
               </div>
               <div className="col-lg-3">
                 <div className="row wrapper ">
-                  {this.validaterole("Minor Medical", "AddNew") ? (
+                  {this.validaterole("Major Medical", "AddNew") ? (
                     <button
                       type="button"
                       style={{ marginTop: 40 }}
@@ -639,7 +564,7 @@ class Minor extends Component {
                     </button>
                   ) : null}
                   &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
+                  {this.validaterole("Major Medical", "Export") ? (
                     <button
                       onClick={this.exportpdf}
                       type="button"
@@ -650,7 +575,7 @@ class Minor extends Component {
                     </button>
                   ) : null}
                   &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
+                  {this.validaterole("Major Medical", "Export") ? (
                     <ExcelFile
                       element={
                         <button
@@ -662,7 +587,7 @@ class Minor extends Component {
                         </button>
                       }
                     >
-                      <ExcelSheet data={rows} name="Minor Medical">
+                      <ExcelSheet data={rows} name="Major Medical">
                         <ExcelColumn label="Fullname" value="Fullname" />
                         <ExcelColumn label="IDNumber" value="IDNumber" />
                         <ExcelColumn label="MedicalFacility" value="MedicalFacility" />
@@ -687,7 +612,7 @@ class Minor extends Component {
             <div className="col-lg-10">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <h2>Minor medical</h2>
+                  <h2>Major medical</h2>
                 </li>
               </ol>
             </div>
@@ -713,7 +638,7 @@ class Minor extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="Number" className="font-weight-bold">
-                       IDNumber
+                       ID Number
                       </label>
                     </div>
                     <div class="col-sm-5">
@@ -749,17 +674,17 @@ class Minor extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
-                        Result
+                        Medical Result
                       </label>
                     </div>
                     <div class="col-sm-5">
                       <Select
-                        name="Result"
-                        value={GenderCategories.filter(
-                          option => option.label === this.state.Result
+                        name="MedicalResults"
+                        value={Results.filter(
+                          option => option.label === this.state.MedicalResults
                         )}
                         onChange={this.handleSelectChange}
-                        options={GenderCategories}
+                        options={Results}
                         required
                       />
                     </div>
@@ -775,6 +700,39 @@ class Minor extends Component {
                         name="DOM"
                         onChange={this.handleInputChange}
                         value={this.state.DOM}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Medical Certificate
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <Select
+                        name="MCertificate"
+                        value={Certifcate.filter(
+                          option => option.label === this.state.MCertificate
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={Certifcate}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Date OF Certifcate issue
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="DOC"
+                        onChange={this.handleInputChange}
+                        value={this.state.DOC}
                         required
                       />
                     </div>
@@ -801,4 +759,4 @@ class Minor extends Component {
   }
 }
 
-export default Minor;
+export default Major;

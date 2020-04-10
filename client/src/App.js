@@ -33,8 +33,22 @@ import smtpdetails from "./Forms/SetUps/smtpdetails";
 import Facility from "./Forms/SetUps/Facility";
 import Registration from "./Forms/Recruitment/Registration";
 import Minor from "./Forms/Recruitment/Minor";
+import Major from "./Forms/Recruitment/Major";
 import DCI from "./Forms/Recruitment/DCI";
-
+import Passport from "./Forms/Recruitment/Passport";
+import Training from "./Forms/Recruitment/Training";
+import Contract from "./Forms/Recruitment/Contract";
+import NEAA from "./Forms/Recruitment/NEAA";
+import Visa from "./Forms/Recruitment/Visa";
+import Attestation from "./Forms/Recruitment/Attestation";
+import Ticketing from "./Forms/Recruitment/Ticketing";
+import Final from "./Forms/Recruitment/Final";
+import Travelling  from "./Forms/Recruitment/Travelling";
+import CustomReport from "./Forms/Reports/CustomReport";
+import MonthlyRegistration from "./Forms/Reports/MonthlyRegistration";
+import TravelledReports from "./Forms/Reports/TravelledReports";
+import Counties from "./Forms/SetUps/Counties";
+import Countries from "./Forms/SetUps/Countries";
 function App() {
   let token = localStorage.getItem("token");
   let UserCategory = localStorage.getItem("UserCategory");
@@ -49,12 +63,11 @@ function App() {
                 <Route path="/Logout" exact component={Logout} />;
                 <Route exact path="/" component={DashBoard} />
                 <Route exact path="/Users" component={Users} />
-               
                 <Route exact path="/Roles" component={Roles} />
                 <Route exct path="/Usergroups" component={UserGroups} />
                 <Route exact path="/Auditrails" component={Auditrails} />
                 <Route exact path="/configurations" component={configurations}/>
-                  <Route exact path="/home" component={DashBoard} />
+                <Route exact path="/home" component={DashBoard} />
                 <Route exact path="/Profile" component={Profile} />
                 <Route exact path="/ResetPassword" component={ResetPassword} />
                 <Route exact path="/SMSdetails" component={SMSdetails} />
@@ -63,6 +76,21 @@ function App() {
                 <Route exact path="/Registration"component={Registration}/>
                 <Route exact path="/Minor"component={Minor}/>
                 <Route exact path="/DCI" component={DCI}/>
+                <Route exact path="/Passport" component={Passport}/>
+                <Route exact path="/Training"component={Training}/>
+                <Route exact path="/Major"component={Major}/>
+                <Route exact path="/Contract" component={Contract}/>
+                <Route exact path="/NEAA" component={NEAA}/>
+                <Route exact path="/Visa" component={Visa}/>
+                <Route exact path="/Attestation" component={Attestation}/>
+                <Route exact path="/Ticketing" component={Ticketing}/>
+                <Route exact path="/Final" component={Final}/>
+                <Route exact path="/Travelling" component={Travelling}/>
+                <Route exact path="/CustomReport" component={CustomReport} />
+                <Route exact path="/MonthlyRegistration" component={MonthlyRegistration} />
+                <Route exact path="/TravelledReports" component={TravelledReports}/>
+                <Route exact path ="/Counties" component={Counties}/>
+                <Route exact path ="/Countries" component={Countries}/>
                  <Route component={Notfound} />
               </Switch>
               <Footer />

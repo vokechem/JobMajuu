@@ -86,7 +86,7 @@ class Profile extends Component {
         data.append("file", this.state.selectedFile[x]);
       }
       axios
-        .post("/api/upload", data, {
+        .post("/api/Uploads/Profile", data, {
           // receive two parameter endpoint url ,form data
           onUploadProgress: ProgressEvent => {
             this.setState({
@@ -210,7 +210,7 @@ class Profile extends Component {
               <img
                 alt="image"
                 className=""
-                src={process.env.REACT_APP_BASE_URL + "/profilepics/" + profile}
+                src={process.env.REACT_APP_BASE_URL + "/photos/" + profile}
                 style={photostyle}
               />
             </div>{" "}

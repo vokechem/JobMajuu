@@ -61,8 +61,8 @@ class Header extends Component {
       });
   };
   componentDidMount() {
-    this.fetchCompanyDetails();
-    this.fetchUsersCompanyDetails();
+    // this.fetchCompanyDetails();
+    // this.fetchUsersCompanyDetails();
   }
   logout() {
     localStorage.clear();
@@ -119,7 +119,7 @@ class Header extends Component {
       " border - bottom - left - radius": "4px"
     };
     let NavStyle = {
-      background: "#FFC300"
+      background: "#edc307"
     };
     return (
       <div id="page-wrapper" className="gray-bg">
@@ -137,11 +137,9 @@ class Header extends Component {
             <ul className="nav navbar-top-links navbar-centre">
               <li>
                 <span className="m-r-sm text-muted welcome-message">
-                  {/* <b style={pStyle}>{this.state.ComapnyName}</b> */}
+                  <b style={pStyle}>{this.state.ComapnyName}</b>
                   <br />
-                  <b style={pStyle1}>
-                   Recruitment Management System(RMS).
-                  </b>
+                  <b style={pStyle1}>Recruitment Management System </b>
                   <br />
                   <b style={pStyle3}>{this.state.LoogedinCompay}</b>
                 </span>
@@ -151,9 +149,7 @@ class Header extends Component {
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <img
-                    src={
-                      process.env.REACT_APP_BASE_URL + "/profilepics/" + profile
-                    }
+                    src={process.env.REACT_APP_BASE_URL + "/Photos/" + profile}
                     className="rounded-circle"
                     alt="User Image"
                     style={photostyle}
@@ -164,9 +160,7 @@ class Header extends Component {
                   <li className="user-header" style={style2}>
                     <img
                       src={
-                        process.env.REACT_APP_BASE_URL +
-                        "/profilepics/" +
-                        profile
+                        process.env.REACT_APP_BASE_URL + "/Photos/" + profile
                       }
                       className="img-circle"
                       alt="User Image"

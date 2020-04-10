@@ -1,11 +1,11 @@
 var express = require("express");
-var Minor = express();
+var Contract = express();
 var mysql = require("mysql");
 var config = require("./../../DB");
 var Joi = require("joi");
 var con = mysql.createPool(config);
 var auth = require("./../../auth");
-Minor.get("/", function(req, res) {
+Contract.get("/", function(req, res) {
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -14,7 +14,7 @@ Minor.get("/", function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call getMinorMedical()";
+      let sp = "call getContract()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -30,12 +30,9 @@ Minor.get("/", function(req, res) {
     }
   });
 });
-Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
-  req,
-  res
-) {
+Contract.get("/:ID", auth.validateRole("Contract Processing"), function (req, res) {
   const ID = req.params.ID;
-  con.getConnection(function(err, connection) {
+  con.getConnection(function (err, connection) {
     if (err) {
       res.json({
         success: false,
@@ -43,8 +40,8 @@ Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
       });
     } // not connected!
     else {
-      let sp = "call GetOneMinorMedical(?)";
-      connection.query(sp, [ID], function(error, results, fields) {
+      let sp = "call getOneContract(?)";
+      connection.query(sp, [ID], function (error, results, fields) {
         if (error) {
           res.json({
             success: false,
@@ -59,20 +56,18 @@ Minor.get("/:ID", auth.validateRole("Minor Medical"), function(
     }
   });
 });
-Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
+Contract.post("/", auth.validateRole("Contract Processing"), function(req, res) {
   const schema = Joi.object().keys({
-    Number:Joi.number()
-    .integer()
-    .min(1),
-      DOM:Joi.date().required(),
-      MedicalFacility: Joi.string().required(),
-      Result: Joi.string().required(),
-      Cost: Joi.string().required()
-  
+    Number:Joi.number().integer().min(1),
+    Contract_status: Joi.string().required(),
+    Cost: Joi.string().required()
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost, res.locals.user];
+    let data = [    req.body.Number,
+        req.body.Contract_status,
+        req.body.Cost,
+        res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -81,7 +76,7 @@ Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveMinorMedical(?,?,?,?,?,?)";
+        let sp = "call SaveContract(?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -106,24 +101,23 @@ Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
     });
   }
 });
-Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
+Contract.put("/:ID", auth.validateRole("Contract Processing"), function (req, res) {
   const schema = Joi.object().keys({
-    Number:Joi.number()
-    .integer()
-    .min(1),
-      DOM:Joi.date().required(),
-      MedicalFacility: Joi.string().required(),
-      Result: Joi.string().required(),
-      Cost: Joi.string().required()
+      Number:Joi.number().integer().min(1),
+      Contract_status: Joi.string().required(),
+      Cost: Joi.string().required(),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
     let data = [
-      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost,
-      res.locals.user,
-      ID
-    ];
+        req.body.Number,
+        req.body.Contract_status,
+        req.body.Cost,
+        res.locals.user,
+        ID,
+      ];
+   
     con.getConnection(function (err, connection) {
       if (err) {
         res.json({
@@ -132,7 +126,7 @@ Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
         });
       } // not connected!
       else {
-        let sp = "call UpdateMinorMedical(?,?,?,?,?,?,?)";
+        let sp = "call UpdateContract(?,?,?,?,?)";
         connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({
@@ -157,7 +151,8 @@ Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
     });
   }
 });
-Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
+
+Contract.delete("/:ID", auth.validateRole("Contract Processing"), function(
   req,
   res
 ) {
@@ -172,7 +167,7 @@ Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
       });
     } // not connected!
     else {
-      let sp = "call DeleteMinorMedical(?,?)";
+      let sp = "call DeleteContract(?,?)";
       connection.query(sp, data, function(error, results, fields) {
         if (error) {
           res.json({
@@ -191,4 +186,4 @@ Minor.delete("/:ID", auth.validateRole("Minor Medical"), function(
     }
   });
 });
-module.exports = Minor;
+module.exports = Contract;
