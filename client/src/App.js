@@ -19,6 +19,7 @@ import Footer from "./Footer";
 import Notfound from "./Notfound";
 import Profile from "./Profile";
 import createacc from "./createacc";
+import AdminDashboard from "./AdminDashboard";
 import ForgotPassword from "./ForgotPassword";
 import decode from "jwt-decode";
 import EmailVerification from "./EmailVerification";
@@ -47,8 +48,10 @@ import Travelling  from "./Forms/Recruitment/Travelling";
 import CustomReport from "./Forms/Reports/CustomReport";
 import MonthlyRegistration from "./Forms/Reports/MonthlyRegistration";
 import TravelledReports from "./Forms/Reports/TravelledReports";
+import ApplicantsProfile from "./Forms/Reports/ApplicantsProfile";
 import Counties from "./Forms/SetUps/Counties";
 import Countries from "./Forms/SetUps/Countries";
+import Cost from "./Forms/Recruitment/Cost";
 function App() {
   let token = localStorage.getItem("token");
   let UserCategory = localStorage.getItem("UserCategory");
@@ -91,6 +94,8 @@ function App() {
                 <Route exact path="/TravelledReports" component={TravelledReports}/>
                 <Route exact path ="/Counties" component={Counties}/>
                 <Route exact path ="/Countries" component={Countries}/>
+                <Route exact path="/Cost" component={Cost}/>
+                <Route exact path="/ApplicantsProfile" component={ApplicantsProfile}/>
                  <Route component={Notfound} />
               </Switch>
               <Footer />
@@ -131,12 +136,12 @@ function App() {
                   <Route path="/Logout" exact component={Logout} />;
                   <Route exact path="/" component={DashBoard} />
                   <Route exact path="/Profile" component={Profile} />
-                                   <Route
+                    <Route
                     exact
                     path="/ResetPassword"
                     component={ResetPassword}
                   />
-                                   <Route component={Notfound} />
+                  <Route component={Notfound} />
                 </Switch>
                 <Footer />
               </Header>
@@ -153,6 +158,7 @@ function App() {
             <Route path="/Logout" exact component={Logout} />;
             <Route path="/" exact component={Login} />
             <Route path="/Login" exact component={Login} />
+            <Route path="/AdminDashboard" exact component={AdminDashboard}/>
             <Route path="/createacc" exact component={createacc} />
             <Route path="/ForgotPassword" exact component={ForgotPassword} />
             <Route
@@ -162,6 +168,7 @@ function App() {
               component={EmailVerification}
             />
             <Route component={Notfound} />
+           
           </Switch>
         </HashRouter>
       </div>

@@ -45,6 +45,16 @@ var TotalUsers=require("./Routes/Reports/TotalUsers");
 var TotalCost=require("./Routes/Reports/TotalCost");
 var counties = require("./Routes/SetUps/counties");
 var countries=require("./Routes/SetUps/countries");
+var MinorMedicalReport=require("./Routes/Reports/MinorMedicalReport");
+var DCIReport=require("./Routes/Reports/DCIReport");
+var PassportReport=require("./Routes/Reports/PassportReport");
+var MinorCost=require("./Routes/FinacialReport/MinorCost");
+var DCICost=require("./Routes/FinacialReport/DCICost");
+var PassportCost=require("./Routes/FinacialReport/PassportCost");
+var MajorCost=require("./Routes/FinacialReport/MajorCost");
+var TicketingCost=require("./Routes/FinacialReport/TicketingCost");
+var FinalCost=require("./Routes/FinacialReport/FinalCost");
+var TotalCostIncurred=require("./Routes/FinacialReport/TotalCostIncurred");
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -101,7 +111,6 @@ app.use("/api/Attestation",Attestation);
 app.use("/api/Ticketing",Ticketing);
 app.use("/api/Final",Final);
 app.use("/api/TotalCost",TotalCost);
-//reports
 app.use("/api/ExecutiveReports", ExecutiveReports);
 app.use("/api/CustomReport", CustomReport);
 app.use("/api/Travelling",Travelling);
@@ -111,9 +120,19 @@ app.use("/api/GroupAccess", GroupAccess);
 app.use("/api/configurations", configurations);
 app.use("/api/Dashboard", Dashboard);
 app.use("/api/TravelledReport",TravelledReport);
+app.use("/api/MinorMedicalReport",MinorMedicalReport);
+app.use("/api/DCIReport",DCIReport);
+app.use("/api/PassportReport",PassportReport);
+app.use("/api/MinorCost",MinorCost);
 app.use("/api/TotalUsers",TotalUsers);
 app.use("/api/counties",counties);
-app.use("/api/countries",countries)
+app.use("/api/countries",countries);
+app.use("/api/DCICost",DCICost);
+app.use("/api/PassportCost",PassportCost);
+app.use("/api/MajorCost",MajorCost);
+app.use("/api/TicketingCost",TicketingCost);
+app.use("/api/FinalCost",FinalCost);
+app.use("/api/TotalCostIncurred",TotalCostIncurred);
 app.use((req, res, next) => {
   const error = new Error("resource not found");
   error.status = 404;

@@ -67,12 +67,18 @@ Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
       DOM:Joi.date().required(),
       MedicalFacility: Joi.string().required(),
       Result: Joi.string().required(),
-      Cost: Joi.string().required()
+      Cost: Joi.string().required(),
+      Type:Joi.string().allow(null).allow(""),
+      RepeatCost:Joi.string().allow(null).allow(""),
+      Others:Joi.string().allow(null).allow(""),
+    
   
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost, res.locals.user];
+    let data = [ req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost,req.body.Type,req.body.RepeatCost,
+      req.body.Others,
+      res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -81,7 +87,7 @@ Minor.post("/", auth.validateRole("Minor Medical"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveMinorMedical(?,?,?,?,?,?)";
+        let sp = "call SaveMinorMedical(?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -114,13 +120,19 @@ Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
       DOM:Joi.date().required(),
       MedicalFacility: Joi.string().required(),
       Result: Joi.string().required(),
-      Cost: Joi.string().required()
+      Cost: Joi.string().required(),
+      Type:Joi.string().allow(null).allow(""),
+      RepeatCost:Joi.string().allow(null).allow(""),
+      Others:Joi.string().allow(null).allow(""),
+     
+
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
     let data = [
-      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost,
+      req.body.Number,req.body.DOM,req.body.MedicalFacility,req.body.Result,req.body.Cost,req.body.Type,req.body.RepeatCost,
+      req.body.Others,
       res.locals.user,
       ID
     ];
@@ -132,7 +144,7 @@ Minor.put("/:ID", auth.validateRole("Minor Medical"), function (req, res) {
         });
       } // not connected!
       else {
-        let sp = "call UpdateMinorMedical(?,?,?,?,?,?,?)";
+        let sp = "call UpdateMinorMedical(?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({

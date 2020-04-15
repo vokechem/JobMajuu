@@ -25,7 +25,10 @@ class Passport extends Component {
      Status:"",
      Passport_Collection_Date:"",
     PassPortNumber:"" ,
-     Cost:"4606",
+     Cost:"",
+     Location:"",
+   CostIncurred:"",
+   PassportOption:"",
     ID: "",
       isUpdate: false,
       selectedFile: null
@@ -56,7 +59,9 @@ class Passport extends Component {
       this.setState({ IDNumber: Facility.value });
       this.setState({ [actionMeta.name]: Facility.label });
     }
+    
   };
+  
   fetchRegistration = () => {
     fetch("/api/Registration", {
       method: "GET",
@@ -96,7 +101,10 @@ class Passport extends Component {
         Status:"",
         Passport_Collection_Date:"",
         PassPortNumber:"" ,
-        Cost:"4606",
+        PassportOption:"",
+        Cost:"",
+        Location:"",
+        CostIncurred:"",
         ID: "",
     };
     this.setState(data);
@@ -165,8 +173,10 @@ class Passport extends Component {
         Status:this.state.Status,
         Passport_Collection_Date: this.state.Passport_Collection_Date,
         PassPortNumber:this.state.PassPortNumber,
-        Cost:this.state.Cost   
-     
+        PassportOption:this.state.PassportOption,
+        Cost:this.state.Cost,   
+        CostIncurred:this.state.CostIncurred,
+        Location:this.state.Location,
     };
 
     if (this.state.isUpdate) {
@@ -189,7 +199,10 @@ class Passport extends Component {
             "isoDate"
           ),
         PassPortNumber:Name.PassPortNumber,
+        PassportOption:Name.PassportOption,
         Cost:Name.Cost,
+        CostIncurred:Name.CostIncurred,
+        Location:Name.Location,
         ID:Name.ID
     };
     this.setState(data);
@@ -208,7 +221,9 @@ class Passport extends Component {
       { title: "POD", dataKey: "POD" },
       { title: "PassPortNumber", dataKey: "PassPortNumber" },
       { title: "Status", dataKey: "Status" },
+      { title: "Option", dataKey: "PassportOption" },
       { title: "Tracking_Number", dataKey: "Tracking_Number" },
+      { title: "Location", dataKey: "Location" },
     
     ];
 
@@ -396,23 +411,26 @@ class Passport extends Component {
         label: "pending"
       },
     ];
+    let PassportOption = [
+      {
+        value: "New",
+        label: "New"
+      },
+      {
+        value: "Lost",
+        label: "Lost"
+      },
+    ];
     let CertificateProcessing = [
         {
-          value: "Queued",
-          label: "Queued"
+          value: "Collected",
+          label: "Collected"
         },
         {
           value: "Processing",
           label: "Processing"
         },
-        {
-          value: "Issued",
-          label: "Issued"
-        },
-        {
-          value: "Others",
-          label: "Others"
-        }
+  
       ];
     const ColumnData = [
         {
@@ -431,12 +449,17 @@ class Passport extends Component {
             sort: "asc"
           },
           {
+            label: "Type",
+            field: "PassportOption",
+            sort: "asc"
+          },
+          {
             label: "Status",
             field: "Status",
             sort: "asc"
           },
         {
-          label: "Passport Collection_Date",
+          label: "Passport Collection Date",
           field: "Passport_Collection_Date",
           sort: "asc"
         },
@@ -448,6 +471,11 @@ class Passport extends Component {
         {
             label: "Tracking Number",
             field: "Tracking_Number",
+            sort: "asc"
+          },
+          {
+            label: "Location",
+            field: "Location",
             sort: "asc"
           },
         {
@@ -469,7 +497,10 @@ class Passport extends Component {
             Tracking_Number:k.Tracking_Number,
             Passport_Collection_Date: new Date(k.Passport_Collection_Date).toLocaleDateString(),
             Status:k.Status,
+            Location:k.Location,
+            PassportOption:k.PassportOption,
             PassPortNumber:k.PassPortNumber,
+            CostIncurred:k.CostIncurred,
             Cost:k.Cost,
             ID:k.ID,
           action: (
@@ -610,12 +641,12 @@ class Passport extends Component {
               <div class="col-sm-12">
                 <form style={FormStyle} onSubmit={this.handleSubmit}>
                   <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                        ID Number
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Number"
                         value={Registration.filter(
@@ -645,12 +676,12 @@ class Passport extends Component {
                   <br />
 
                   <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                  Passport Status
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Status"
                         value={CertificateProcessing.filter(
@@ -679,27 +710,12 @@ class Passport extends Component {
                   </div>
                   <br/>
                   <div class="row">
-                  <div class="col-sm-1">
-                      <label for="PEType" className="font-weight-bold">
-                        Tracking Number
-                      </label>
-                    </div>
-                    <div class="col-sm-5">
-                      <input
-                        type="text"
-                        class="form-control"
-                        name="Tracking_Number"
-                        onChange={this.handleInputChange}
-                        value={this.state.Tracking_Number}
-                        required
-                      />
-                    </div>
-                    <div class="col-sm-2">
+                  <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                         passport Number
                       </label>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                       <input
                         type="text"
                         class="form-control"
@@ -709,7 +725,88 @@ class Passport extends Component {
                         required
                       />
                     </div>
+                  <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Tracking Number
+                      </label>
+                    </div>
+                    <div class="col-sm-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="Tracking_Number"
+                        onChange={this.handleInputChange}
+                        value={this.state.Tracking_Number}
+                        required
+                      />
+                    </div>
+                   
+                    <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        Location
+                      </label>
+                    </div>
+                    <div class="col-sm-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="Location"
+                        onChange={this.handleInputChange}
+                        value={this.state.Location}
+                        required
+                      />
+                    </div>
                   </div>
+                  <br/>
+                  <div class="row">
+                  <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        passport Option
+                      </label>
+                    </div>
+                    <div class="col-sm-3">
+                    <Select
+                        name="PassportOption"
+                        value={PassportOption.filter(
+                          option => option.label === this.state.PassportOption
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={PassportOption}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Cost
+                      </label>
+                    </div>
+                    <div class="col-sm-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="Cost"
+                        onChange={this.handleInputChange}
+                        value={this.state.Cost}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        Cost incurred
+                      </label>
+                    </div>
+                    <div class="col-sm-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="CostIncurred"
+                        onChange={this.handleInputChange}
+                        value={this.state.CostIncurred}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <br/>
                   <div className=" row">
                     <div className="col-sm-2" />
                     <div className="col-sm-8" />

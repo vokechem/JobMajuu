@@ -1,11 +1,12 @@
 var express = require("express");
-var TotalCost = express();
+var MinorMedicalReport = express();
 var mysql = require("mysql");
 var config = require("./../../DB");
-
+var Joi = require("joi");
 var con = mysql.createPool(config);
 var auth = require("./../../auth");
-TotalCost.get("/", auth.validateRole("Dashboard"), function(req, res) {
+MinorMedicalReport.get("/", function(req, res) {
+  // const ID = req.params.ID;
   con.getConnection(function(err, connection) {
     if (err) {
       res.json({
@@ -14,7 +15,7 @@ TotalCost.get("/", auth.validateRole("Dashboard"), function(req, res) {
       });
     } // not connected!
     else {
-      let sp = "call TotalCost()";
+      let sp = "call GetMinormedicalMontly()";
       connection.query(sp, function(error, results, fields) {
         if (error) {
           res.json({
@@ -31,5 +32,6 @@ TotalCost.get("/", auth.validateRole("Dashboard"), function(req, res) {
   });
 });
 
+// requests handled
 
-module.exports = TotalCost;
+module.exports = MinorMedicalReport;

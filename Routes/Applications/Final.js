@@ -63,6 +63,9 @@ Final.post("/", auth.validateRole("Final Medical"), function(req, res) {
     DOM:Joi.date().required(),
     MedicalResult: Joi.string().required(),
     Cost:Joi.string().required(),
+    Type:Joi.string().allow(null).allow(""),
+    RepeatCost:Joi.string().allow(null).allow(""),
+    Other:Joi.string().allow(null).allow(""),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -72,6 +75,9 @@ Final.post("/", auth.validateRole("Final Medical"), function(req, res) {
       req.body.DOM,
       req.body.MedicalResult,
       req.body.Cost,
+      req.body.Type,
+      req.body.RepeatCost,
+      req.body.Other,
       res.locals.user,
   
     ];
@@ -83,7 +89,7 @@ Final.post("/", auth.validateRole("Final Medical"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveFinalMedical(?,?,?,?,?,?)";
+        let sp = "call SaveFinalMedical(?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -115,6 +121,9 @@ Final.put("/:ID", auth.validateRole("Final Medical"), function (req, res) {
     DOM:Joi.date().required(),
     MedicalResult: Joi.string().required(),
     Cost:Joi.string().required(),
+    Type:Joi.string().allow(null).allow(""),
+    RepeatCost:Joi.string().allow(null).allow(""),
+    Other:Joi.string().allow(null).allow(""),
     });
     const result = Joi.validate(req.body, schema);
     if (!result.error) {
@@ -125,6 +134,9 @@ Final.put("/:ID", auth.validateRole("Final Medical"), function (req, res) {
       req.body.DOM,
       req.body.MedicalResult,
       req.body.Cost,
+      req.body.Type,
+      req.body.RepeatCost,
+      req.body.Other,
       res.locals.user,
         ID 
       ];
@@ -136,7 +148,7 @@ Final.put("/:ID", auth.validateRole("Final Medical"), function (req, res) {
           });
         } // not connected!
         else {
-          let sp = "call UpdateFinalMedical(?,?,?,?,?,?,?)";
+          let sp = "call UpdateFinalMedical(?,?,?,?,?,?,?,?,?,?)";
           connection.query(sp, data, function (error, results, fields) {
             if (error) {
               res.json({

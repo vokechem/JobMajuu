@@ -60,13 +60,25 @@ Contract.post("/", auth.validateRole("Contract Processing"), function(req, res) 
   const schema = Joi.object().keys({
     Number:Joi.number().integer().min(1),
     Contract_status: Joi.string().required(),
-    Cost: Joi.string().required()
+    Cost: Joi.string().required(),
+    EmployerName:Joi.string().required(),
+  EmployerID:Joi.string().allow(null).allow(""),
+  EmployerContact:Joi.string().allow(null).allow(""),
+  EmployerAddress:Joi.string().allow(null).allow(""),
+  VisaNumber:Joi.string().allow(null).allow(""),
+  ContractNumber:Joi.string().allow(null).allow(""),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     let data = [    req.body.Number,
         req.body.Contract_status,
         req.body.Cost,
+        req.body.EmployerName,
+        req.body.EmployerID,
+        req.body.EmployerContact,
+        req.body.EmployerAddress,
+        req.body.VisaNumber,
+        req.body.ContractNumber,
         res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
@@ -76,7 +88,7 @@ Contract.post("/", auth.validateRole("Contract Processing"), function(req, res) 
         });
       } // not connected!
       else {
-        let sp = "call SaveContract(?,?,?,?)";
+        let sp = "call SaveContract(?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -106,6 +118,12 @@ Contract.put("/:ID", auth.validateRole("Contract Processing"), function (req, re
       Number:Joi.number().integer().min(1),
       Contract_status: Joi.string().required(),
       Cost: Joi.string().required(),
+      EmployerName:Joi.string().required(),
+      EmployerID:Joi.string().allow(null).allow(""),
+      EmployerContact:Joi.string().allow(null).allow(""),
+      EmployerAddress:Joi.string().allow(null).allow(""),
+      VisaNumber:Joi.string().allow(null).allow(""),
+      ContractNumber:Joi.string().allow(null).allow(""),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -114,6 +132,12 @@ Contract.put("/:ID", auth.validateRole("Contract Processing"), function (req, re
         req.body.Number,
         req.body.Contract_status,
         req.body.Cost,
+        req.body.EmployerName,
+        req.body.EmployerID,
+        req.body.EmployerContact,
+        req.body.EmployerAddress,
+        req.body.VisaNumber,
+        req.body.ContractNumber,
         res.locals.user,
         ID,
       ];
@@ -126,7 +150,7 @@ Contract.put("/:ID", auth.validateRole("Contract Processing"), function (req, re
         });
       } // not connected!
       else {
-        let sp = "call UpdateContract(?,?,?,?,?)";
+        let sp = "call UpdateContract(?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({

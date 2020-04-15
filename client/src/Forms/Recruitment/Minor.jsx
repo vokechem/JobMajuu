@@ -28,6 +28,9 @@ class Minor extends Component {
       DOM:"",
       Cost:"500",
       Resuit:"",
+      Type:"",
+      RepeatCost:"",
+      Others:"0",
       ID: "",
       MedID:"",
       isUpdate: false,
@@ -122,6 +125,9 @@ class Minor extends Component {
       DOM:"",
       Cost:"500",
       Resuit:"",
+      Type:"",
+      RepeatCost:"",
+      Others:"",
       ID: "",
       isUpdate: false,
       PIN: "",
@@ -293,6 +299,10 @@ class Minor extends Component {
       Result: this.state.Result,
       DOM:this.state.DOM,
       Cost: this.state.Cost,
+      Type:this.state.Type,
+      RepeatCost:this.state.RepeatCost,
+      Others:this.state.Others,
+     
      
     };
 
@@ -313,6 +323,9 @@ class Minor extends Component {
       Result: Minor.Result,
       Cost: Minor.Cost,
       MedicalFacility: Minor.MedicalFacility,
+      Type:Minor.Type,
+      RepeatCost:Minor.RepeatCost,
+      Others:Minor.Others,
       ID:Minor.ID
     };
 
@@ -523,6 +536,16 @@ class Minor extends Component {
         label: "Pass"
       }
     ];
+    let TypeOption = [
+      {
+        value: "New",
+        label: "New"
+      },
+      {
+        value: "repeat",
+        label: "repeat"
+      }
+    ];
     const ColumnData = [
       {
         label: "Fullname",
@@ -550,6 +573,11 @@ class Minor extends Component {
         sort: "asc"
       },
       {
+        label: "Type",
+        field: "Type",
+        sort: "asc"
+      },
+      {
         label: "Cost",
         field: "Cost",
         sort: "asc"
@@ -570,6 +598,7 @@ class Minor extends Component {
           Fullname: k.Fullname,
           DOM: new Date(k.DOM).toLocaleDateString(),
           Phone: k.Phone,
+          Type:k.Type,
           MedicalFacility: k.MedicalFacility,
           Cost: k.Cost,
           ID:k.ID,
@@ -747,6 +776,22 @@ class Minor extends Component {
                   <br />
 
                   <div class="row">
+                  <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                        Type
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <Select
+                        name="Type"
+                        value={TypeOption.filter(
+                          option => option.label === this.state.Type
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={TypeOption}
+                        required
+                      />
+                    </div>
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
                         Result
@@ -763,7 +808,10 @@ class Minor extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                  </div>
+                  <br />
+                  <div class="row">
+                  <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
                         Date OF medical
                       </label>
@@ -776,6 +824,21 @@ class Minor extends Component {
                         onChange={this.handleInputChange}
                         value={this.state.DOM}
                         required
+                      />
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                       Other Cost
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <input
+                        type="Number"
+                        class="form-control"
+                        name="Others"
+                        onChange={this.handleInputChange}
+                        value={this.state.Others}
+                       
                       />
                     </div>
                   </div>

@@ -27,7 +27,7 @@ class Visa extends Component {
       VAD:"",
       VID:"",
       Status:"",
-      Cost: "2200",
+      Cost: "0",
       ID:"",
       isUpdate: false,
       selectedFile: null
@@ -588,12 +588,12 @@ class Visa extends Component {
               <div class="col-sm-12">
                 <form style={FormStyle} onSubmit={this.handleSubmit}>
                   <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                        ID Number
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Number"
                         value={Registration.filter(
@@ -604,12 +604,12 @@ class Visa extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                     Visa Application Date
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <input
                         type="date"
                         class="form-control"
@@ -623,12 +623,12 @@ class Visa extends Component {
                   <br />
 
                   <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                       Visa Status
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Status"
                         value={Transcriptstatus.filter(
@@ -639,12 +639,12 @@ class Visa extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                        Visa Issuance Date
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <input
                         type="date"
                         class="form-control"

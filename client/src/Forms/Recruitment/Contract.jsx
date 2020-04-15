@@ -22,7 +22,13 @@ class Contract extends Component {
       profile: true,
       Number:"",
     Contract_status:"",
-      Cost: "1000",
+      Cost: "0",
+      EmployerName:"",
+      EmployerID:"",
+      EmployerContact:"",
+      EmployerAddress:"",
+      VisaNumber:"",
+      ContractNumber:"",
       ID:"",
       isUpdate: false,
       selectedFile: null
@@ -156,6 +162,12 @@ class Contract extends Component {
       Number: this.state.Number,
       Contract_status: this.state.Contract_status,
       Cost: this.state.Cost,
+      EmployerName:this.state.EmployerName,
+      EmployerID:this.state.EmployerID,
+      EmployerContact:this.state.EmployerContact,
+      EmployerAddress:this.state.EmployerAddress,
+      VisaNumber:this.state.VisaNumber,
+      ContractNumber:this.state.VisaNumber,
     };
 
     if (this.state.isUpdate) {
@@ -170,6 +182,12 @@ class Contract extends Component {
       Number: Contract.Number,
       Contract_status: Contract.Contract_status,
       Cost: Contract.Cost,
+      EmployerName:Contract.EmployerName,
+      EmployerID:Contract.EmployerID,
+      EmployerContact:Contract.EmployerContact,
+      EmployerAddress:Contract.EmployerAddress,
+      VisaNumber:Contract.VisaNumber,
+      ContractNumber:Contract.ContractNumber,
       ID:Contract.ID
     };
 
@@ -186,6 +204,12 @@ class Contract extends Component {
       { title: "Fullname", dataKey: "Fullname" },
       { title: "IDNumber", dataKey: "IDNumber" },
       { title: "Cost", dataKey: "Cost" },
+      { title: "EmployerName", dataKey: "EmployerName" },
+      { title: "EmployerID", dataKey: "EmployerID" },
+      { title: "EmployerContact", dataKey: "EmployerContact" },
+      { title: "EmployerAddress", dataKey: "EmployerAddress" },
+      { title: "VisaNumber", dataKey: "VisaNumber" },
+      { title: "ContractNumber", dataKey: "ContractNumber" },
       { title: "Contract_status", dataKey: "Contract_status" },
     
     ];
@@ -386,13 +410,33 @@ class Contract extends Component {
         sort: "asc"
       },
       {
-        label: "Contract_status",
-        field: "Contract_status",
+        label: "EmployerName",
+        field: "EmployerName",
         sort: "asc"
       },
       {
-        label: "Cost",
-        field: "Cost",
+        label: "EmployerID",
+        field: "EmployerID",
+        sort: "asc"
+      },
+      {
+        label: "EmployerContact",
+        field: "EmployerContact",
+        sort: "asc"
+      },
+      {
+        label: "VisaNumber",
+        field: "VisaNumber",
+        sort: "asc"
+      },
+      {
+        label: "ContractNumber",
+        field: "ContractNumber",
+        sort: "asc"
+      },
+      {
+        label: "Contract_status",
+        field: "Contract_status",
         sort: "asc"
       },
       {
@@ -411,6 +455,12 @@ class Contract extends Component {
           Fullname: k.Fullname,
           Contract_status: k.Contract_status,
           Cost: k.Cost,
+          EmployerName:k.EmployerName,
+          EmployerID:k.EmployerID,
+          EmployerContact:k.EmployerContact,
+          EmployerAddress:k.EmployerAddress,
+          VisaNumber:k.VisaNumber,
+          ContractNumber:k.ContractNumber,  
           action: (
             <span>
               <a
@@ -549,12 +599,12 @@ class Contract extends Component {
               <div class="col-sm-12">
                 <form style={FormStyle} onSubmit={this.handleSubmit}>
                   <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                        ID Number
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Number"
                         value={Registration.filter(
@@ -565,12 +615,111 @@ class Contract extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
+                      <label for="Number" className="font-weight-bold">
+                   Employer Name
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="EmployerName"
+                        onChange={this.handleInputChange}
+                        value={this.state.EmployerName}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-sm-2">
+                      <label for="Number" className="font-weight-bold">
+                      Employer IDNo
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="EmployerID"
+                        onChange={this.handleInputChange}
+                        value={this.state.EmployerID}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-2">
+                      <label for="Number" className="font-weight-bold">
+                      Employer Contact
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="EmployerContact"
+                        onChange={this.handleInputChange}
+                        value={this.state.EmployerContact}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-sm-2">
+                      <label for="Number" className="font-weight-bold">
+                      Employer Address
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="EmployerAddress"
+                        onChange={this.handleInputChange}
+                        value={this.state.EmployerAddress}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-2">
+                      <label for="Number" className="font-weight-bold">
+                      Visa Number
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="VisaNumber"
+                        onChange={this.handleInputChange}
+                        value={this.state.VisaNumber}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-sm-2">
+                      <label for="Number" className="font-weight-bold">
+                      Contract Number
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="ContractNumber"
+                        onChange={this.handleInputChange}
+                        value={this.state.ContractNumber}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                        Contract status
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Contract_status"
                         value={Contract.filter(
@@ -582,6 +731,7 @@ class Contract extends Component {
                       />
                     </div>
                   </div>
+                  <br/>
                   <div className=" row">
                     <div className="col-sm-2" />
                     <div className="col-sm-8" />

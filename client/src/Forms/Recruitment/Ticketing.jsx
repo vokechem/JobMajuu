@@ -412,7 +412,7 @@ class Ticketing extends Component {
         width: 200
       },
       {
-        label: "Flight Date",
+        label: "Ticket Date",
         field: "Flight_Date",
         sort: "asc",
         width: 200
@@ -614,7 +614,7 @@ class Ticketing extends Component {
                     </div>
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
-                   Flight Date
+                   Ticket Date
                       </label>
                     </div>
                     <div class="col-sm-5">

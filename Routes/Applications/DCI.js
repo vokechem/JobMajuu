@@ -65,12 +65,15 @@ DCI.post("/", auth.validateRole("DCI Clearance"), function(req, res) {
     DOT:Joi.date().required(),
     Certificate_status: Joi.string().required(),
     DOC:Joi.date().required(),
-    Cost: Joi.string().required()
+    Cost: Joi.string().allow(null).allow(""),
+    CostIncurred:Joi.string().allow(null).allow(""),
+      Processing:Joi.string().allow(null).allow(""),
   
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
-    let data = [req.body.Number,req.body.DOT,req.body.Certificate_status,req.body.DOC,req.body.Cost, res.locals.user];
+    let data = [req.body.Number,req.body.DOT,req.body.Certificate_status,req.body.DOC,req.body.Cost,
+      req.body.CostIncurred,req.body.Processing, res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -79,7 +82,7 @@ DCI.post("/", auth.validateRole("DCI Clearance"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveDCI(?,?,?,?,?,?)";
+        let sp = "call SaveDCI(?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -110,13 +113,16 @@ DCI.put("/:ID", auth.validateRole("DCI Clearance"), function (req, res) {
     DOT:Joi.date().required(),
     Certificate_status: Joi.string().required(),
     DOC:Joi.date().required(),
-    Cost: Joi.string().required()
+    Cost: Joi.string().allow(null).allow(""),
+    CostIncurred:Joi.string().allow(null).allow(""),
+    Processing:Joi.string().allow(null).allow(""),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     const ID = req.params.ID;
     let data = [
       req.body.Number,req.body.DOT,req.body.Certificate_status,req.body.DOC,req.body.Cost,
+      req.body.CostIncurred,req.body.Processing,
       res.locals.user,
       ID
     ];
@@ -128,7 +134,7 @@ DCI.put("/:ID", auth.validateRole("DCI Clearance"), function (req, res) {
         });
       } // not connected!
       else {
-        let sp = "call UpdateDCI(?,?,?,?,?,?,?)";
+        let sp = "call UpdateDCI(?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({

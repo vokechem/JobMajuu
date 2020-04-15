@@ -31,6 +31,9 @@ class Major extends Component {
       MCertificate: "",
       DOC: "",
       Cost: "4000",
+      Type:"",
+      RepeatCost:"",
+      Other:"",
       ID:"",
       MedID:"",
       isUpdate: false,
@@ -126,6 +129,9 @@ class Major extends Component {
         MCertificate: "",
         DOC: "",
         Cost: "4000",
+        Type:"",
+        RepeatCost:"",
+        Other:"",
         ID:"",
         MedID:"",
       isUpdate: false,
@@ -198,6 +204,9 @@ class Major extends Component {
       MCertificate:this.state.MCertificate,
       DOC:this.state.DOC,
       Cost: this.state.Cost,
+      Type:this.state.Type,
+      RepeatCost:this.state.RepeatCost,
+      Other:this.state.RepeatCost,
     };
 
     if (this.state.isUpdate) {
@@ -222,6 +231,9 @@ class Major extends Component {
         "isoDate"
       ),
       Cost: Major.Cost,
+      Type:Major.Type,
+      RepeatCost:Major.RepeatCost,
+      Other:Major.Other,
       ID:Major.ID
     };
 
@@ -433,6 +445,17 @@ class Major extends Component {
       },
     
     ];
+    let TypeOption = [
+      {
+          value: "New",
+          label: "New"
+        },
+    {
+      value: "Repeat",
+      label: "Repeat"
+    },
+  
+  ];
     let Certifcate = [
         {
           value: "Issued",
@@ -475,6 +498,11 @@ class Major extends Component {
         sort: "asc"
       },
       {
+        label: "Type",
+        field: "Type",
+        sort: "asc"
+      },
+      {
         label: "Cost",
         field: "Cost",
         sort: "asc"
@@ -496,6 +524,7 @@ class Major extends Component {
           DOM: new Date(k.DOM).toLocaleDateString(),
           MedicalFacility: k.MedicalFacility,
           MCertificate:k.MCertificate,
+          Type:k.Type,
           DOC:new Date(k.DOM).toLocaleDateString(),
           Cost: k.Cost,
           action: (
@@ -636,12 +665,12 @@ class Major extends Component {
               <div class="col-sm-12">
                 <form style={FormStyle} onSubmit={this.handleSubmit}>
                   <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                        ID Number
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="Number"
                         value={Registration.filter(
@@ -652,12 +681,12 @@ class Major extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                         Medical Facility
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="MedicalFacility"
                         value={Facility.filter(
@@ -672,12 +701,28 @@ class Major extends Component {
                   <br />
 
                   <div class="row">
-                    <div class="col-sm-1">
+                  <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        Type
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                      <Select
+                        name="Type"
+                        value={TypeOption.filter(
+                          option => option.label === this.state.Type
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={TypeOption}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                         Medical Result
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="MedicalResults"
                         value={Results.filter(
@@ -688,12 +733,14 @@ class Major extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                  </div>
+                  <div class="row">
+                  <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                         Date OF medical
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <input
                         type="date"
                         class="form-control"
@@ -703,14 +750,12 @@ class Major extends Component {
                         required
                       />
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                         Medical Certificate
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <Select
                         name="MCertificate"
                         value={Certifcate.filter(
@@ -721,12 +766,15 @@ class Major extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                    </div>
+                    <br/>  
+                    <div class="row">
+                    <div class="col-sm-2">
                       <label for="PEType" className="font-weight-bold">
                         Date OF Certifcate issue
                       </label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
                       <input
                         type="date"
                         class="form-control"
@@ -736,7 +784,23 @@ class Major extends Component {
                         required
                       />
                     </div>
-                  </div>
+                    <div class="col-sm-2">
+                      <label for="PEType" className="font-weight-bold">
+                        Other Cost
+                      </label>
+                    </div>
+                    <div class="col-sm-4">
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="Other"
+                        onChange={this.handleInputChange}
+                        value={this.state.Other}
+                    
+                      />
+                    </div>
+                      </div>
+                    <br/>
                   <div className=" row">
                     <div className="col-sm-2" />
                     <div className="col-sm-8" />

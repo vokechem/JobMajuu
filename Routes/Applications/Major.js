@@ -67,13 +67,15 @@ Major.post("/", auth.validateRole("Major Medical"), function(req, res) {
       DOM:Joi.date().required(),
       MCertificate: Joi.string().required(),
       DOC: Joi.date().required(),
-      Cost: Joi.string().required()
-  
+      Cost: Joi.string().required(),
+      Type:Joi.string().required(),
+      RepeatCost:Joi.string().allow(null).allow(""),
+      Other:Joi.string().allow(null).allow(""), 
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
     let data = [req.body.Number,req.body.MedicalFacility,req.body.MedicalResults,
-        req.body.DOM,req.body.MCertificate,req.body.DOC,req.body.Cost, res.locals.user];
+        req.body.DOM,req.body.MCertificate,req.body.DOC,req.body.Cost,req.body.Type,req.body.RepeatCost,req.body.Other, res.locals.user];
     con.getConnection(function(err, connection) {
       if (err) {
         res.json({
@@ -82,7 +84,7 @@ Major.post("/", auth.validateRole("Major Medical"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveMajor(?,?,?,?,?,?,?,?)";
+        let sp = "call SaveMajor(?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -115,7 +117,10 @@ Major.put("/:ID", auth.validateRole("Major Medical"), function (req, res) {
       DOM:Joi.date().required(),
       MCertificate: Joi.string().required(),
       DOC: Joi.date().required(),
-      Cost: Joi.string().required()
+      Cost: Joi.string().required(),
+      Type:Joi.string().required(),
+      RepeatCost:Joi.string().allow(null).allow(""),
+      Other:Joi.string().allow(null).allow(""), 
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -123,6 +128,7 @@ Major.put("/:ID", auth.validateRole("Major Medical"), function (req, res) {
     let data = [
         req.body.Number,req.body.MedicalFacility,req.body.MedicalResults,
         req.body.DOM,req.body.MCertificate,req.body.DOC,req.body.Cost,
+        req.body.Type,req.body.RepeatCost,req.body.Other,
       res.locals.user,
       ID
     ];
@@ -134,7 +140,7 @@ Major.put("/:ID", auth.validateRole("Major Medical"), function (req, res) {
         });
       } // not connected!
       else {
-        let sp = "call UpdateMajor(?,?,?,?,?,?,?,?,?)";
+        let sp = "call UpdateMajor(?,?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function (error, results, fields) {
           if (error) {
             res.json({

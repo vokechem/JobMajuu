@@ -19,6 +19,7 @@ class DCI extends Component {
       Facility: [],
       Registration:[],
       privilages: [],
+      Processing:[],
       profile: true,
       IDNumber: "",
       FullName:"",
@@ -27,9 +28,14 @@ class DCI extends Component {
       DOT:"",
       DOC:"",
       Certificate_status:"",
-      Cost:"1084",
+      Cost:"1050",
+      CostIncurred:"34",
+      Processing:"",
       ID: "",
       MedID:"",
+      msg:"",
+      open: false,   
+      showrx:false,
       isUpdate: false,
       selectedFile: null
     };
@@ -37,6 +43,7 @@ class DCI extends Component {
     this.Resetsate = this.Resetsate.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    //this.CheckValue=this.CheckValue.bind(this)
   }
   showDiv() {
     document.getElementById("nav-profile-tab").click();
@@ -59,6 +66,11 @@ class DCI extends Component {
       this.setState({ IDNumber: Facility.value });
       this.setState({ [actionMeta.name]: Facility.label });
     }
+    let itemobject=this.state.Facility.filter(
+      option =>
+        option.Processing ===  Facility.value
+    )
+  
   };
   fetchRegistration = () => {
     fetch("/api/Registration", {
@@ -114,16 +126,18 @@ class DCI extends Component {
   };
   Resetsate() {
     const data = {
-        IDNumber: "",
-        FullName:"",
-        Number:"",
-        Phone:"",
-        DOT:"",
-        DOC:"",
-        Certificate_status:"",
-        Cost:"1084",
-        ID: "",
-        MedID:"",
+      IDNumber: "",
+      FullName:"",
+      Number:"",
+      Phone:"",
+      DOT:"",
+      DOC:"",
+      Certificate_status:"",
+      Cost:"",
+      CostIncurred:"",
+      Processing:"",
+      ID: "",
+      MedID:"",
       isUpdate: false,
       PIN: "",
       Companyregistrationdate: "",
@@ -132,105 +146,6 @@ class DCI extends Component {
     };
     this.setState(data);
   }
-  maxSelectFile = event => {
-    let files = event.target.files; // create file object
-    if (files.length > 1) {
-      const msg = "Only One image can be uploaded at a time";
-      event.target.value = null; // discard selected file
-      toast.warn(msg);
-      return false;
-    }
-    return true;
-  };
-  checkMimeType = event => {
-    let files = event.target.files;
-    let err = []; // create empty array
-    const types = ["image/png", "image/jpeg", "image/gif"];
-    for (var x = 0; x < files.length; x++) {
-      if (types.every(type => files[x].type !== type)) {
-        err[x] = files[x].type + " is not a supported format\n";
-        // assign message to array
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      // loop create toast massage
-      event.target.value = null;
-      toast.error(err[z]);
-    }
-    return true;
-  };
-  checkFileSize = event => {
-    let files = event.target.files;
-    let size = 2000000;
-    let err = [];
-    for (var x = 0; x < files.length; x++) {
-      if (files[x].size > size) {
-        err[x] = files[x].type + "is too large, please pick a smaller file\n";
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      toast.error(err[z]);
-      event.target.value = null;
-    }
-    return true;
-  };
-  onClickHandler = () => {
-    if (this.state.selectedFile) {
-      const data = new FormData();
-      // var headers = {
-      //   "Content-Type": "multipart/form-data",
-      //   "x-access-token": localStorage.getItem("token")
-      // };
-
-      //for single files
-      //data.append("file", this.state.selectedFile);
-      //for multiple files
-      for (var x = 0; x < this.state.selectedFile.length; x++) {
-        data.append("file", this.state.selectedFile[x]);
-      }
-      axios
-        .post("/api/upload", data, {
-          // receive two parameter endpoint url ,form data
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-            });
-          }
-        })
-        .then(res => {
-          this.setState({
-            Logo: res.data
-          });
-          // localStorage.setItem("UserPhoto", res.data);
-          toast.success("upload success");
-        })
-        .catch(err => {
-          toast.error("upload fail");
-        });
-    } else {
-      toast.warn("Please select a photo to upload");
-    }
-  };
-  onChangeHandler = event => {
-    //for multiple files
-    var files = event.target.files;
-    if (
-      this.maxSelectFile(event) &&
-      this.checkFileSize(event) &&
-      this.checkMimeType(event)
-    ) {
-      this.setState({
-        selectedFile: files,
-        loaded: 0
-      });
-
-      //for single file
-      // this.setState({
-      //   selectedFile: event.target.files[0],
-      //   loaded: 0
-      // });
-    }
-  };
   fetchDCI = () => {
     fetch("/api/DCI", {
       method: "GET",
@@ -294,6 +209,8 @@ class DCI extends Component {
       Certificate_status: this.state.Certificate_status,
       DOC:this.state.DOC,
       Cost: this.state.Cost,
+      CostIncurred:this.state.CostIncurred,
+      Processing:this.state.Processing,
      
     };
 
@@ -304,7 +221,6 @@ class DCI extends Component {
     }
   };
   handleEdit = DCI => {
- 
     const data = {
       Number: DCI.Number,
       DOT: dateFormat(
@@ -313,6 +229,8 @@ class DCI extends Component {
       ),
       Certificate_status: DCI.Certificate_status,
       Cost: DCI.Cost,
+      CostIncurred:DCI.CostIncurred,
+      Processing:DCI.Processing,
       DOC: dateFormat(
         new Date(DCI.DOC).toLocaleDateString(),
         "isoDate"
@@ -521,22 +439,24 @@ class DCI extends Component {
     });
     let CertificateProcessing = [
       {
-        value: "Queued",
-        label: "Queued"
+        value: "Collected",
+        label: "Collected"
       },
       {
         value: "Processing",
         label: "Processing"
       },
+    ];
+    let Processing=[
       {
-        value: "Issued",
-        label: "Issued"
+        value: "Job Majuu",
+        label: "job Majuu"
       },
       {
-        value: "Others",
-        label: "Others"
+        value: "individual Processing",
+        label: "individual Processing"
       }
-    ];
+    ]
     const ColumnData = [
       {
         label: "Fullname",
@@ -564,13 +484,18 @@ class DCI extends Component {
         sort: "asc"
       },
       {
-        label: "Certificate_status",
+        label: "Certificate status",
         field: "Certificate_status",
         sort: "asc"
       },
       {
         label: "Cost",
         field: "Cost",
+        sort: "asc"
+      },
+      {
+        label: "Processed by",
+        field: "Processing",
         sort: "asc"
       },
       {
@@ -588,6 +513,7 @@ class DCI extends Component {
           IDNumber: k.IDNumber,
           Fullname: k.Fullname,
           Phone: k.Phone,
+          Processing:k.Processing,
           DOC: new Date(k.DOC).toLocaleDateString(),
           DOT: new Date(k.DOT).toLocaleDateString(),
           Certificate_status: k.Certificate_status,
@@ -796,6 +722,25 @@ class DCI extends Component {
                         required
                       />
                     </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                    Processing By
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <Select
+                        name="Processing"
+                        value={Processing.filter(
+                          option => option.label === this.state.Processing
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={Processing}
+                        required
+                      />
+                    </div>
+    
                   </div>
                   <div className=" row">
                     <div className="col-sm-2" />

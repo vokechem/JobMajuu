@@ -416,8 +416,8 @@ class Training extends Component {
         label: "completed"
       },
       {
-        value: "terminated",
-        label: "terminated"
+        value: "Defaulted",
+        label: "Defaulted"
       },
     ];
     const ColumnData = [

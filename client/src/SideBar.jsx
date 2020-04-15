@@ -333,17 +333,17 @@ const Reports = props => {
               </li>
             ) : null}
             
-            {props.validaterole("Total Cost", "View") ? (
+            {props.validaterole("Applicants Profile", "View") ? (
               <li>
-                <Link to="/TravelledReports">
+                <Link to="/ApplicantsProfile">
                   <i className="fa fa-user-plus" />
-                  Travelled Applicant
+                  Applicants Profile
                 </Link>
               </li>
             ) : null}
              {props.validaterole("Total Cost", "View") ? (
               <li>
-                <Link to="/Custom">
+                <Link to="/Cost">
                   <i className="fa fa-user-plus" />
                   Total Cost
                 </Link>
@@ -351,7 +351,7 @@ const Reports = props => {
             ) : null}
             {props.validaterole("Fail Applicants", "View") ? (
               <li>
-                <Link to="/Custom">
+                <Link to="/AdminDashboard">
                   <i className="fa fa-user-plus" />
                   Fail Applicant
                 </Link>

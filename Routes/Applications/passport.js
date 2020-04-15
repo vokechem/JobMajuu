@@ -65,6 +65,9 @@ Passport.post("/", auth.validateRole("Passport processing"), function(req, res) 
     Cost: Joi.string().required(),
     Passport_Collection_Date:Joi.date().required(),
     PassPortNumber:Joi.string().required(),
+    PassportOption:Joi.string().required(),
+    CostIncurred:Joi.string().required(),
+    Location:Joi.string().allow(null).allow(""),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -75,7 +78,10 @@ Passport.post("/", auth.validateRole("Passport processing"), function(req, res) 
       req.body.Status,
       req.body.Passport_Collection_Date,
       req.body.PassPortNumber,
+      req.body.PassportOption,
       req.body.Cost,
+req.body.CostIncurred,
+req.body.Location,
       res.locals.user,
   
     ];
@@ -87,7 +93,7 @@ Passport.post("/", auth.validateRole("Passport processing"), function(req, res) 
         });
       } // not connected!
       else {
-        let sp = "call SavePassport(?,?,?,?,?,?,?,?)";
+        let sp = "call SavePassport(?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -121,6 +127,9 @@ Passport.put("/:ID", auth.validateRole("Passport processing"), function (req, re
         Cost: Joi.string().required(),
         Passport_Collection_Date:Joi.date().required(),
         PassPortNumber:Joi.string().required(),
+        PassportOption:Joi.string().required(),
+        CostIncurred:Joi.string().required(),
+        Location:Joi.string().allow(null).allow(""),
     });
     const result = Joi.validate(req.body, schema);
     if (!result.error) {
@@ -132,7 +141,10 @@ Passport.put("/:ID", auth.validateRole("Passport processing"), function (req, re
         req.body.Status,
         req.body.Passport_Collection_Date,
         req.body.PassPortNumber,
+        req.body.PassportOption,
+        req.body.CostIncurred,
         req.body.Cost,
+        req.body.Location,
         res.locals.user,
         ID 
       ];
@@ -144,7 +156,7 @@ Passport.put("/:ID", auth.validateRole("Passport processing"), function (req, re
           });
         } // not connected!
         else {
-          let sp = "call UpdatePassport(?,?,?,?,?,?,?,?,?)";
+          let sp = "call UpdatePassport(?,?,?,?,?,?,?,?,?,?,?,?)";
           connection.query(sp, data, function (error, results, fields) {
             if (error) {
               res.json({
