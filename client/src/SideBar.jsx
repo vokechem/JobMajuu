@@ -320,6 +320,22 @@ const Reports = props => {
               <li>
                 <Link to="/MonthlyRegistration">
                   <i className="fa fa-tasks" />
+                  Daily Reports
+                </Link>
+              </li>
+            ) : null}
+             {props.validaterole("Monthly", "View") ? (
+              <li>
+                <Link to="/MonthlyRegistration">
+                  <i className="fa fa-tasks" />
+                  Weekly Reports
+                </Link>
+              </li>
+            ) : null}
+             {props.validaterole("Monthly", "View") ? (
+              <li>
+                <Link to="/MonthlyRegistration">
+                  <i className="fa fa-tasks" />
                   Monthly Reports
                 </Link>
               </li>

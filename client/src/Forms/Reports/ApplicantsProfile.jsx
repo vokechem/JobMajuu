@@ -11,6 +11,7 @@ import "./../../Styles/tablestyle.css";
 import CKEditor from "ckeditor4-react";
 import ReactHtmlParser from "react-html-parser";
 import Modal from "react-awesome-modal";
+import ReactToPrint from 'react-to-print';
 var _ = require("lodash");
 let userdateils = localStorage.getItem("UserData");
 let data = JSON.parse(userdateils);
@@ -1677,7 +1678,7 @@ handleSiblingsSubmit = event => {
       }
     ];
     let Rowdata1 = [];
-    const rows = [...this.state.Registration];
+    const rows = [...this.state.Registration,...this.state.Educational];
     if (rows.length > 0) {
       rows.forEach(k => {
         const Rowdata = {
@@ -1743,8 +1744,8 @@ handleSiblingsSubmit = event => {
         width: 150
       };
       let Fullstyle = {
-        height: 150,
-        width: 150
+        height: 300,
+        width: 300
       };
       let photo = this.state.photo;
       if (!this.state.photo) {
@@ -1836,12 +1837,28 @@ handleSiblingsSubmit = event => {
                         <td> {this.state.Country}</td>
                       </tr>
                       <tr>
+                        <td className="font-weight-bold"> County:</td>
+                        <td> {this.state.Classify}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Village:</td>
+                        <td> {this.state.Classify}</td>
+                      </tr>
+                      <tr>
                         <td className="font-weight-bold"> Religion:</td>
                         <td> {this.state.Religion}</td>
                       </tr>
                       <tr>
                         <td className="font-weight-bold"> Marital Status:</td>
                         <td> {this.state.Marital}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Institution:</td>
+                        <td> {this.state.Institution}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Classification:</td>
+                        <td> {this.state.Classify}</td>
                       </tr>
                       <tr>
                         <td className="font-weight-bold"> Languages:</td>
@@ -1886,7 +1903,7 @@ handleSiblingsSubmit = event => {
                 alt="image"
                 className=""
                 src={process.env.REACT_APP_BASE_URL + "/Registration/" + FullPhoto}
-                style={photostyle}
+                style={Fullstyle}
               /></td>
                       </tr>
                     </table>
@@ -1894,7 +1911,7 @@ handleSiblingsSubmit = event => {
                 </div>
               </div>
               <br />
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-lg-12 ">
                   <h3 style={headingstyle}>Education Details</h3>
                   <div className="col-lg-11 border border-success rounded">
@@ -1915,8 +1932,8 @@ handleSiblingsSubmit = event => {
                   </div>
                 </div>
               </div>
-              <br/>
-              <div className="row">
+              <br/> */}
+              {/* <div className="row">
                 <div className="col-lg-12 ">
                   <h3 style={headingstyle}>Guaridan Details</h3>
                   <div className="col-lg-11 border border-success rounded">
@@ -1983,10 +2000,18 @@ handleSiblingsSubmit = event => {
                   </div>
                 </div>
               </div>
-              <br/>
+              <br/> */}
               <div className="row">
                       <div className="col-lg-9"></div>
                       <div className="col-lg-3">
+                        &nbsp; &nbsp;
+                        <button
+                          type="button"
+                          onClick={this.GoBack}
+                          className="btn btn-success"
+                        >
+                          Book
+                        </button>
                         &nbsp; &nbsp;
                         <button
                           type="button"

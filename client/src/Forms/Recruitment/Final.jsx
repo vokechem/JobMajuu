@@ -29,6 +29,9 @@ class Final extends Component {
       Status:"",
       MedicalResult: "",
       Cost:"500",
+      Type:"",
+      RepeatCost:"0",
+      Other:"",
       ID:"",
       isUpdate: false,
       selectedFile: null
@@ -118,6 +121,9 @@ class Final extends Component {
         DOM:"",
         MedicalResult: "",
         Cost:"",
+        Type:"",
+      RepeatCost:"0",
+      Other:"",
         ID:"",
       isUpdate: false,    
     };
@@ -186,6 +192,9 @@ class Final extends Component {
       DOM:this.state.DOM,
       MedicalResult:this.state.MedicalResult, 
       Cost:this.state.Cost,
+      Type:this.state.Type,
+      RepeatCost:this.state.RepeatCost,
+      Other:this.state.Other,
       
     };
     if (this.state.isUpdate) {
@@ -204,6 +213,9 @@ class Final extends Component {
       ),
       MedicalResult:  Final.MedicalResult,
       Cost:  Final.Cost,
+      Type:Final.Type,
+      Other:Final.Other,
+      RepeatCost:Final.RepeatCost,
       ID:Final.ID
     };
     this.setState(data);
@@ -218,18 +230,16 @@ class Final extends Component {
       
     var columns = [
       { title: "Fullname", dataKey: "Fullname" },
-      { title: "IDNumber", dataKey: "IDNumber" },
+      { title: "ID Number", dataKey: "IDNumber" },
       { title: "MedicalFacility", dataKey: "MedicalFacility" },
-      { title: "DOM", dataKey: "DOM" },
-      { title: "MedicalResult", dataKey: "MedicalResult" },
+      { title: "Date of Medical ", dataKey: "DOM" },
+      { title: "Medical Result", dataKey: "MedicalResult" },
       { title: "Cost", dataKey: "Cost" },
-    
+      { title: "Type", dataKey: "Type" },
+      { title: "RepeatCost", dataKey: "RepeatCost" },
     ];
-
     const rows = [...this.state.Final];
-
     var doc = new jsPDF("p", "pt", "a2", "portrait");
-
     doc.autoTable(columns, rows, {
       margin: { top: 60 },
       beforePageContent: function(data) {
@@ -417,6 +427,18 @@ class Final extends Component {
         },
       
       ];
+      let TypeOption = [
+        {
+            value: "New",
+            label: "New"
+          },
+      {
+        value: "Repeat",
+        label: "Repeat"
+      },
+    
+    ];
+      
     const ColumnData = [
       {
         label: "Fullname",
@@ -443,6 +465,12 @@ class Final extends Component {
         width: 200
       },
       {
+        label: "Type",
+        field: "Type",
+        sort: "asc",
+        width: 200
+      },
+      {
         label: "Cost",
         field: "Cost",
         sort: "asc",
@@ -455,7 +483,7 @@ class Final extends Component {
         width: 200
       }
     ];
-    let Rowdata1 = [];
+    let Rowdata1 = [];  
     const rows = [...this.state.Final];
     if (rows.length > 0) {
       rows.map((k, i) => {
@@ -465,6 +493,7 @@ class Final extends Component {
           DOM: new Date(k.DOM).toLocaleDateString(),
           MedicalFacility:k.MedicalFacility,
           Cost:k.Cost,
+          Type:k.Type,
           ID:k.ID,
           action: (
             <span>
@@ -645,6 +674,22 @@ class Final extends Component {
                   <div class="row">
                     <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
+                   Type
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <Select
+                        name="Type"
+                        value={TypeOption.filter(
+                          option => option.label === this.state.Type
+                        )}
+                        onChange={this.handleSelectChange}
+                        options={TypeOption}
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
                    Medical Result
                       </label>
                     </div>
@@ -659,9 +704,13 @@ class Final extends Component {
                         required
                       />
                     </div>
-                    <div class="col-sm-1">
+                  </div>
+                 
+                  <br/>
+                  <div class="row">
+                  <div class="col-sm-1">
                       <label for="PEType" className="font-weight-bold">
-                       Date OF medical 
+                       Date Of Medical 
                       </label>
                     </div>
                     <div class="col-sm-5">
@@ -672,6 +721,20 @@ class Final extends Component {
                         onChange={this.handleInputChange}
                         value={this.state.DOM}
                         required
+                      />
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="PEType" className="font-weight-bold">
+                      Others
+                      </label>
+                    </div>
+                    <div class="col-sm-5">
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="Other"
+                        onChange={this.handleInputChange}
+                        value={this.state.Other}  
                       />
                     </div>
                   </div>
@@ -698,5 +761,4 @@ class Final extends Component {
     }
   }
 }
-
 export default Final;

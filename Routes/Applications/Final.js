@@ -79,7 +79,6 @@ Final.post("/", auth.validateRole("Final Medical"), function(req, res) {
       req.body.RepeatCost,
       req.body.Other,
       res.locals.user,
-  
     ];
     con.getConnection(function(err, connection) {
       if (err) {
@@ -129,7 +128,7 @@ Final.put("/:ID", auth.validateRole("Final Medical"), function (req, res) {
     if (!result.error) {
       const ID = req.params.ID;
       let data = [
-        req.body.Number,
+      req.body.Number,
       req.body.MedicalFacility,
       req.body.DOM,
       req.body.MedicalResult,
