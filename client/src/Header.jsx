@@ -77,9 +77,9 @@ class Header extends Component {
       textAlign: "center"
     };
     const pStyle1 = {
-      color: "white",
+      color: "#F7DC6F",
       float: "left",
-      fontSize: "18px",
+      fontSize: "20px",
       "margin-left": 70,
       textAlign: "Center"
     };
@@ -118,19 +118,15 @@ class Header extends Component {
       "border- bottom - right - radius": "4px",
       " border - bottom - left - radius": "4px"
     };
-    let NavStyle = {
-      background: "#edc307"
-    };
+   let margin={
+    "margin-bottom": "0px",
+   };
     return (
       <div id="page-wrapper" className="gray-bg">
-        <div className="row border-bottom">
-          <nav
-            className="navbar navbar-static-top"
-            role="navigation"
-            style={NavStyle}
-          >
+       <div class="row border-bottom">
+        <nav class="navbar navbar-static-top gray-bg" role="navigation"style={margin}>
             <div className="navbar-header">
-              <a className="navbar-minimalize minimalize-styl-2 btn btn-default">
+              <a className="navbar-minimalize minimalize-styl-2 btn btn-primary">
                 <i className="fa fa-bars" />{" "}
               </a>
             </div>
@@ -145,16 +141,19 @@ class Header extends Component {
                 </span>
               </li>
             </ul>
-            <ul className="nav navbar-top-links navbar-centre">
-              <li class="dropdown user user-menu">
+            <ul class="nav navbar-top-links navbar-right">
+            <li>
+              <span class="m-r-sm text-muted welcome-message"style={pStyle2}>Welcome {localStorage.getItem("UserName")}</span>
+                </li>
+            <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <img
                     src={process.env.REACT_APP_BASE_URL + "/Photos/" + profile}
                     className="rounded-circle"
                     alt="User Image"
                     style={photostyle}
+                    
                   />
-                  <b style={pStyle2}>{localStorage.getItem("UserName")}</b>
                 </a>
                 <ul className="dropdown-menu" style={dropdownmenu}>
                   <li className="user-header" style={style2}>
@@ -165,30 +164,29 @@ class Header extends Component {
                       className="img-circle"
                       alt="User Image"
                       style={photostyle1}
+                      onClick={this.profile}
+                      href="/"
                     />
-                    <br />
-                    <p> {localStorage.getItem("UserName")}</p>
                   </li>
-
                   <li className="user-footer">
-                    <div className="pull-left">
+                    <div className="pull-right">
                       <Link to="/Profile">
                         <b className="btn btn-default btn-flat">Profile</b>
                       </Link>
-                    </div>
-                    <div class="pull-right">
-                      <a
-                        onClick={this.logout}
-                        href="/"
-                        className="btn btn-default btn-flat"
-                      >
-                        Sign out
-                      </a>
                     </div>
                   </li>
                 </ul>
                 <ul />
               </li>
+                <li>
+                    <a
+                        onClick={this.logout}
+                        href="/"
+                        className="btn fa fa-sign-out"
+                      >
+                    Log out
+                    </a>
+                </li>
             </ul>
           </nav>
         </div>

@@ -55,6 +55,23 @@ var MajorCost=require("./Routes/FinacialReport/MajorCost");
 var TicketingCost=require("./Routes/FinacialReport/TicketingCost");
 var FinalCost=require("./Routes/FinacialReport/FinalCost");
 var TotalCostIncurred=require("./Routes/FinacialReport/TotalCostIncurred");
+//redAlerts
+var MinorRedAlerts=require("./Routes/RedAlerts/MinorRedAlerts");
+var DCIRedAlerts=require("./Routes/RedAlerts/DCIRedAlerts");
+var PassportRedAlerts=require("./Routes/RedAlerts/PassportRedAlerts");
+var TrainingRedAlerts=require("./Routes/RedAlerts/TrainingRedAlerts");
+var MajorRedAlerts=require("./Routes/RedAlerts/MajorRedAlerts");
+var ContractRedAlerts= require("./Routes/RedAlerts/ContractRedAlerts");
+var NEARedAlerts=require("./Routes/RedAlerts/NEARedAlerts");
+var VisaRedAlerts=require("./Routes/RedAlerts/VisaRedAlerts");
+var TicketingRedAlerts=require("./Routes/RedAlerts/TicketingRedAlerts");
+var AttestationRedAlert=require("./Routes/RedAlerts/AttestationRedAlert");
+var FinalRedAlerts=require("./Routes/RedAlerts/FinalRedAlerts");
+var TravelledApplicant=require("./Routes/RedAlerts/TravelledApplicant");
+var RegistrationCustom=require("./Routes/CustomReports/RegistrationCustom");
+var TrainingCustom =require("./Routes/CustomReports/TrainingCustom");
+var DCICustom =require("./Routes/CustomReports/DCICustom");
+var PassportCustom =require("./Routes/CustomReports/PassportCustom");
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -133,6 +150,23 @@ app.use("/api/MajorCost",MajorCost);
 app.use("/api/TicketingCost",TicketingCost);
 app.use("/api/FinalCost",FinalCost);
 app.use("/api/TotalCostIncurred",TotalCostIncurred);
+//redalerts
+app.use("/api/MinorRedAlerts",MinorRedAlerts);
+app.use("/api/MajorRedAlerts",MajorRedAlerts);
+app.use("/api/DCIRedAlerts",DCIRedAlerts);
+app.use("/api/PassportRedAlerts",PassportRedAlerts);
+app.use("/api/TrainingRedAlerts",TrainingRedAlerts);
+app.use("/api/ContractRedAlerts",ContractRedAlerts);
+app.use("/api/NEARedAlerts",NEARedAlerts);
+app.use("/api/VisaRedAlerts",VisaRedAlerts);
+app.use("/api/AttestationRedAlert",AttestationRedAlert);
+app.use("/api/TicketingRedAlerts",TicketingRedAlerts);
+app.use("/api/FinalRedAlerts",FinalRedAlerts);
+app.use("/api/TravelledApplicant",TravelledApplicant);
+app.use("/api/RegistrationCustom",RegistrationCustom);
+app.use("/api/TrainingCustom",TrainingCustom);
+app.use("/api/DCICustom",DCICustom);
+app.use("/api/PassportCustom",PassportCustom);
 app.use((req, res, next) => {
   const error = new Error("resource not found");
   error.status = 404;

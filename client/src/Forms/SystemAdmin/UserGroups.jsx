@@ -25,7 +25,8 @@ class UserGroups extends Component {
       SystemparameteresCategory: [],
       Menus:[],
       RecruitmentCategory: [],
-      ReportsCategory: []
+      ReportsCategory: [],
+      AnalyticsCategory: []
     };
 
     this.openModal = this.openModal.bind(this);
@@ -135,6 +136,9 @@ class UserGroups extends Component {
           });
           this.setState({
             ReportsCategory: UserRoles[0].Reports
+          });
+          this.setState({
+            AnalyticsCategory: UserRoles[0].Analytics
           });
         } else {
           swal("", Roles.message, "error");
@@ -882,6 +886,84 @@ class UserGroups extends Component {
                                   <div>
                                     <h3>Recruitment</h3>
                                     {this.state.RecruitmentCategory.map(
+                                      function(role, i) {
+                                        return (
+                                          <tr id={i}>
+                                            <td style={tablestyle}>
+                                              {role.RoleName}
+                                            </td>
+                                            <td>
+                                              <input
+                                                className="checkbox"
+                                                id={i}
+                                                type="checkbox"
+                                                name="Create"
+                                                defaultChecked={role.AddNew}
+                                                onChange={e =>
+                                                  handleCheckBoxChange(role, e)
+                                                }
+                                                // onChange={handleCheckBoxChange(e)}
+                                              />
+                                            </td>
+                                            <td style={tdstyle}>
+                                              <input
+                                                className="checkbox"
+                                                id={i + 1}
+                                                type="checkbox"
+                                                name="View"
+                                                defaultChecked={role.View}
+                                                //   value=""
+                                                onChange={e =>
+                                                  handleCheckBoxChange(role, e)
+                                                }
+                                              />
+                                            </td>
+                                            <td style={tdstyle}>
+                                              <input
+                                                className="checkbox"
+                                                id={i + 2}
+                                                type="checkbox"
+                                                name="Delete"
+                                                defaultChecked={role.Remove}
+                                                onChange={e =>
+                                                  handleCheckBoxChange(role, e)
+                                                }
+                                              />
+                                            </td>
+                                            <td style={tdstyle}>
+                                              <input
+                                                className="checkbox"
+                                                id={i + 3}
+                                                type="checkbox"
+                                                name="Update"
+                                                defaultChecked={role.Edit}
+                                                onChange={e =>
+                                                  handleCheckBoxChange(role, e)
+                                                }
+                                              />
+                                            </td>
+                                            <td style={tdstyle}>
+                                              <input
+                                                className="checkbox"
+                                                id={i + 3}
+                                                type="checkbox"
+                                                name="Export"
+                                                defaultChecked={role.Export}
+                                                onChange={e =>
+                                                  handleCheckBoxChange(role, e)
+                                                }
+                                              />
+                                            </td>
+                                          </tr>
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                ) : null}
+                                   {this.state.AnalyticsCategory ? (
+                                  <div>
+                                    <h3>Analytics</h3>
+                                    {this.state.AnalyticsCategory.map(
                                       function(role, i) {
                                         return (
                                           <tr id={i}>

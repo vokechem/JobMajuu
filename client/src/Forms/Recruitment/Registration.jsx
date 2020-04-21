@@ -21,7 +21,6 @@ class Registration extends Component {
     super();
     this.state = {
       open: false,
-      Confidential: false,
       openRequest: false,
       Registration: [],
       Parent: [],
@@ -89,7 +88,6 @@ class Registration extends Component {
        KinName:"",
        CurrentResident:"",
        Contact:"",
-     
       profile: true,
       summary: false,
       IsUpdate: false,
@@ -119,10 +117,7 @@ class Registration extends Component {
       this.setState({ [actionMeta.name]: Countries.label });
     }
   };
-  handleSelectChange = (UserGroup, actionMeta) => {
-         
-   
-    
+  handleSelectChange = (UserGroup, actionMeta) => { 
     let itemobject=this.state.Items.filter(
       option =>
         option.ItemID ===  UserGroup.value
@@ -145,8 +140,7 @@ class Registration extends Component {
     }
 
     return false;
-  };
-  
+  }; 
   fetchcounties = () => {
     fetch("/api/counties", {
       method: "GET",

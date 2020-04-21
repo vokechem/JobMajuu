@@ -534,6 +534,10 @@ class Minor extends Component {
       {
         value: "Pass",
         label: "Pass"
+      },
+      {
+        value: "Pending",
+        label: "Pending"
       }
     ];
     let TypeOption = [

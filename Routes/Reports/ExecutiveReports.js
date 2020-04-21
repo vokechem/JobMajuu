@@ -121,7 +121,7 @@ ExecutiveReports.get("/:ID/:Val1/:Val2/:Val3", function(req, res) {
     } // not connected!
     else {
       if (Val3 === "requesthandled") {
-        let sp = "call Generaterequesthandled(?,?,?)";
+        let sp = "call GenerateRegistrationDaily(?,?,?)";
         connection.query(sp, [ID, Val1, Val2], function(
           error,
           results,

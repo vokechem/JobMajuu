@@ -19,7 +19,8 @@ class requesthandled extends Component {
       openCategoryModal: false,
       openPEModal: false,
       PEName: "",
-      Category: ""
+      Category: "",
+      IDnumber:""
     };
 
     this.Downloadfile = this.Downloadfile.bind(this);
@@ -206,11 +207,14 @@ class requesthandled extends Component {
   };
   render() {
     let FormStyle = {
-      margin: "20px"
+      margin: "10px"
     };
-    const data = [["Category", "Frequency"]];
+    let breadcrumbstyle={
+      color:"gray"
+    }
+    const data = [["date", "Registration"]];
     [...this.state.Data].map((k, i) => {
-      let d = [k.Status, k.Count];
+      let d = [ new Date(k.date).toLocaleDateString(), k.Count];
       data.push(d);
     });
     let DrillDown = this.DrillDown;
@@ -227,7 +231,7 @@ class requesthandled extends Component {
           {" "}
           <div style={{ overflow: "scroll", height: "100%" }}>
             <a
-              style={{ float: "right", color: "red", margin: "10px" }}
+              style={{ float: "right", color: "red", margin: "5px" }}
               href="javascript:void(0);"
               onClick={() => this.CloseCategoryModal()}
             >
@@ -284,19 +288,19 @@ class requesthandled extends Component {
             </div>
           </div>
         </Modal>
-
         <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-9">
+          <div className="row wrapper border-bottom white-gray page-heading">
+          <div className="col-lg-11">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <h2>Cases handled</h2>
+                    <h2 className="font-weight-bold">
+                    </h2>
+                    <h2>New Registration</h2>   
                 </li>
               </ol>
             </div>
           </div>
         </div>
-
         <div>
           <br />
           <div className="row">
@@ -402,34 +406,8 @@ class requesthandled extends Component {
                       role="tabpanel"
                       aria-labelledby="nav-home-tab"
                     >
-                      <br />
-                      {this.state.Data.length > 0 ? (
-                        <div className="App">
-                          <Chart
-                            chartType="Bar"
-                            width="100%"
-                            height="400px"
-                            data={data}
-                            loader={<div>Loading Chart</div>}
-                            options={{
-                              // Material design options
-                              chart: {
-                                title: "Cases handled"
-                              }
-                            }}
-                          />
-                        </div>
-                      ) : null}
-                    </div>
-                    <div
-                      class="tab-pane fade"
-                      id="nav-profile"
-                      role="tabpanel"
-                      aria-labelledby="nav-profile-tab"
-                    >
-                      <br />
-                      <h3 style={{ cursor: "pointer", color: "#1c84c6" }}>
-                        Cases handled between{" "}
+                       <h3 style={{ cursor: "pointer", color: "#1c84c6" }}>
+                       Registration between{" "}
                         {dateFormat(
                           new Date(this.state.FromDate).toLocaleDateString(),
                           "fullDate"
@@ -440,11 +418,28 @@ class requesthandled extends Component {
                           "fullDate"
                         )}
                       </h3>
-                      <table className="table table-borderless table-sm">
+                      <br />
+                      <br />
+                      <h3 style={{ cursor: "pointer", color: "#1c84c6" }}>
+                       Registration between{" "}
+                        {dateFormat(
+                          new Date(this.state.FromDate).toLocaleDateString(),
+                          "fullDate"
+                        )}{" "}
+                        and{" "}
+                        {dateFormat(
+                          new Date(this.state.Todate).toLocaleDateString(),
+                          "fullDate"
+                        )}
+                      </h3>
+                      <table className="table table-bordered  table-sm">
                         <thead className="thead-light">
                           <th>No</th>
-                          <th>Category</th>
-                          <th>Frequency</th>
+                          <th>Name</th>
+                          <th>ID Number</th>
+                          <th>Date of Birth</th>
+                          <th>Phone</th>
+                          <th>County</th>
                         </thead>
                         {this.state.Data.map((r, i) => (
                           <tr>
@@ -458,13 +453,101 @@ class requesthandled extends Component {
                               style={{ cursor: "pointer" }}
                               onClick={() => DrillDown(r.Status)}
                             >
-                              {r.Status}
+                              {r.Fullname}
                             </td>
                             <td
                               style={{ cursor: "pointer" }}
                               onClick={() => DrillDown(r.Status)}
                             >
-                              {r.Count}
+                              {r.IDNumber}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.DOB)}
+                            >
+                              {new Date(r.DOB).toLocaleDateString()}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Phone)}
+                            >
+                              {r.Phone}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Status)}
+                            >
+                              {r.County}
+                            </td>
+                          </tr>
+                        ))}
+                      </table>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="nav-profile"
+                      role="tabpanel"
+                      aria-labelledby="nav-profile-tab"
+                    >
+                      <br />
+                      <h3 style={{ cursor: "pointer", color: "#1c84c6" }}>
+                       Registration between{" "}
+                        {dateFormat(
+                          new Date(this.state.FromDate).toLocaleDateString(),
+                          "fullDate"
+                        )}{" "}
+                        and{" "}
+                        {dateFormat(
+                          new Date(this.state.Todate).toLocaleDateString(),
+                          "fullDate"
+                        )}
+                      </h3>
+                      <table className="table table-bordered  table-sm">
+                        <thead className="thead-light">
+                          <th>No</th>
+                          <th>Name</th>
+                          <th>ID Number</th>
+                          <th>Date of Birth</th>
+                          <th>Phone</th>
+                          <th>County</th>
+                        </thead>
+                        {this.state.Data.map((r, i) => (
+                          <tr>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Status)}
+                            >
+                              {i + 1}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Status)}
+                            >
+                              {r.Fullname}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Status)}
+                            >
+                              {r.IDNumber}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.DOB)}
+                            >
+                              {new Date(r.DOB).toLocaleDateString()}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Phone)}
+                            >
+                              {r.Phone}
+                            </td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => DrillDown(r.Status)}
+                            >
+                              {r.County}
                             </td>
                           </tr>
                         ))}

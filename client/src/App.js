@@ -49,9 +49,15 @@ import CustomReport from "./Forms/Reports/CustomReport";
 import MonthlyRegistration from "./Forms/Reports/MonthlyRegistration";
 import TravelledReports from "./Forms/Reports/TravelledReports";
 import ApplicantsProfile from "./Forms/Reports/ApplicantsProfile";
+import RegistrationCustom from "./Forms/Reports/RegistrationCustom";
+import MinorCustom from "./Forms/Reports/MinorCustom";
 import Counties from "./Forms/SetUps/Counties";
 import Countries from "./Forms/SetUps/Countries";
 import Cost from "./Forms/Recruitment/Cost";
+import requesthandled from "./Forms/Reports/requesthandled";
+import PassportCustom from "./Forms/Reports/PassportCustom";
+import TrainingCustom from "./Forms/Reports/TrainingCustom";
+import DCICustom from "./Forms/Reports/DCICustom";
 function App() {
   let token = localStorage.getItem("token");
   let UserCategory = localStorage.getItem("UserCategory");
@@ -96,6 +102,17 @@ function App() {
                 <Route exact path ="/Countries" component={Countries}/>
                 <Route exact path="/Cost" component={Cost}/>
                 <Route exact path="/ApplicantsProfile" component={ApplicantsProfile}/>
+                <Route exact path="/RegistrationCustom" component={RegistrationCustom}/>
+                <Route exact path="/MinorCustom" component={MinorCustom}/>
+                <Route exact path="/PassportCustom" component={PassportCustom}/>
+                <Route exact path="/TrainingCustom" component={TrainingCustom}/>
+                <Route exact path="/DCICustom" component={DCICustom}/>
+                
+                <Route
+                  exact
+                  path="/requesthandled"
+                  component={requesthandled}
+                />
                  <Route component={Notfound} />
               </Switch>
               <Footer />

@@ -9,6 +9,7 @@ class SideBar extends Component {
       redirect: true,
       privilages: [],
       showMenuRecruitment: false,
+      showMenuAnalytics: false,
       showMenuAdmin: true,
       showMenuParameteres: false,
       showMenuFeesSettings: false,
@@ -39,6 +40,11 @@ class SideBar extends Component {
           showMenuReports: !this.state.showMenuReports
         });
       }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
     } else if (Module === "Fees Settings") {
       this.setState({ showMenuFeesSettings: !this.state.showMenuFeesSettings });
     } else if (Module === "Recruitment") {
@@ -61,6 +67,11 @@ class SideBar extends Component {
           showMenuReports: !this.state.showMenuReports
         });
       }
+        if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
     }  else if (Module === "Reports") {
       this.setState({
         showMenuReports: !this.state.showMenuReports
@@ -78,6 +89,12 @@ class SideBar extends Component {
       if (this.state.showMenuAdmin) {
         this.setState({ showMenuAdmin: !this.state.showMenuAdmin });
       }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      
     } else if (Module === "System parameteres") {
       this.setState({
         showMenuParameteres: !this.state.showMenuParameteres
@@ -95,6 +112,35 @@ class SideBar extends Component {
       if (this.state.showMenuReports) {
         this.setState({
           showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+    }  else if (Module === "Analytics") {
+      this.setState({
+        showMenuAnalytics: !this.state.showMenuAnalytics
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
         });
       }
     } 
@@ -239,7 +285,7 @@ class SideBar extends Component {
       margin: 10,
       "border-radius": 2
     };
-
+ 
     let MenuStyle = {
       color: "#E7E7E7",
       cursor: "pointer",
@@ -250,7 +296,7 @@ class SideBar extends Component {
       // "font-family": `"Helvetica Neue", Helvetica, Arial, sans - serif`
     };
     return (
-      <nav className="navbar-default navbar-static-side" role="navigation">
+      <nav className="navbar-default navbar-static-side" role="navigation" >
         <div className="sidebar-collapse">
           <ul className="nav metismenu" id="side-menu">
             <li className="">
@@ -299,7 +345,12 @@ class SideBar extends Component {
               showmenuvalue={this.state.showMenuReports}
               MenuStyle={MenuStyle}
             />
-            
+              <Analytics
+              validaterole={this.validaterole}
+              showMenu={this.showMenu}
+              showmenuvalue={this.state.showMenuAnalytics}
+              MenuStyle={MenuStyle}
+            />
           </ul>
         </div>
       </nav>
@@ -316,35 +367,43 @@ const Reports = props => {
         </li>
         {props.showmenuvalue ? (
           <ul className="nav nav-second-level">
-            {props.validaterole("Monthly", "View") ? (
+            {props.validaterole("Custom Reports", "View") ? (
               <li>
-                <Link to="/MonthlyRegistration">
+                <Link to="/RegistrationCustom">
                   <i className="fa fa-tasks" />
-                  Daily Reports
-                </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Monthly", "View") ? (
-              <li>
-                <Link to="/MonthlyRegistration">
-                  <i className="fa fa-tasks" />
-                  Weekly Reports
-                </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Monthly", "View") ? (
-              <li>
-                <Link to="/MonthlyRegistration">
-                  <i className="fa fa-tasks" />
-                  Monthly Reports
+                 Registration
                 </Link>
               </li>
             ) : null}
              {props.validaterole("Custom Reports", "View") ? (
               <li>
-                <Link to="/CustomReport">
+                <Link to="/MinorCustom">
+                  <i className="fa fa-tasks" />
+                  Minor Medical
+                </Link>
+              </li>
+            ) : null}
+              {props.validaterole("Custom Reports", "View") ? (
+              <li>
+                <Link to="/DCICustom">
                   <i className="fa fa-user-plus" />
-                Custom reports
+                DCI reports
+                </Link>
+              </li>
+            ) : null}
+             {props.validaterole("Custom Reports", "View") ? (
+              <li>
+                <Link to="/PassportCustom">
+                  <i className="fa fa-user-plus" />
+                Passport reports
+                </Link>
+              </li>
+            ) : null}
+            {props.validaterole("Custom Reports", "View") ? (
+              <li>
+                <Link to="/TrainingCustom">
+                  <i className="fa fa-user-plus" />
+                Training reports
                 </Link>
               </li>
             ) : null}
@@ -365,9 +424,9 @@ const Reports = props => {
                 </Link>
               </li>
             ) : null}
-            {props.validaterole("Fail Applicants", "View") ? (
+            {props.validaterole("Monthly", "View") ? (
               <li>
-                <Link to="/AdminDashboard">
+                <Link to="/requesthandled">
                   <i className="fa fa-user-plus" />
                   Fail Applicant
                 </Link>
@@ -383,7 +442,50 @@ const Reports = props => {
   }
 };
 
-
+const Analytics = props => {
+  if (props.validaterole("Analytics", "View")) {
+    return (
+      <li className="">
+        <li onClick={e => props.showMenu("Analytics", e)} style={props.MenuStyle}>
+          <i className="fa fa-cogs" />{" "}
+          <span className="nav-label">Analytics</span>
+        </li>
+        {props.showmenuvalue ? (
+          <ul className="nav nav-second-level">
+            {props.validaterole("Monthly", "View") ? (
+              <li>
+                <Link to="/MonthlyRegistration">
+                  <i className="fa fa-tasks" />
+                  Monthy Analytics
+                </Link>
+              </li>
+            ) : null}
+            
+             {props.validaterole("Total Cost", "View") ? (
+              <li>
+                <Link to="/Cost">
+                  <i className="fa fa-user-plus" />
+                 Cost Analytics
+                </Link>
+              </li>
+            ) : null}
+            {props.validaterole("Monthly", "View") ? (
+              <li>
+                <Link to="/requesthandled">
+                  <i className="fa fa-user-plus" />
+                  Fail Applicant
+                </Link>
+              </li>
+            ) : null}
+        
+          </ul>
+        ) : null}
+      </li>
+    );
+  } else {
+    return <div />;
+  }
+};
 const Recruitment = props => {
   if (props.validaterole("Recruitment", "View")) {
     return (
@@ -578,7 +680,7 @@ const DashBoards = props => {
     return (
       <li className="">
         <Link to="/Home">
-          <i className="fa fa-dashboard" />{" "}
+          <i className="fa fa-th-large" />{" "}
           <span className="nav-label">DashBoard</span>
         </Link>
       </li>
